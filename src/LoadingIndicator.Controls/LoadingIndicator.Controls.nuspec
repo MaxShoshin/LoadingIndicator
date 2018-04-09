@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>LoadingIndicator.Controls</id>
+	<version>0.0.0.0</version> <!-- Will be taken from AssemblyInfomationVersion -->
+        <title>LoadingIndicator.Controls</title>
+        <authors>Maxim Shoshin</authors>
+        <owners>Maxim Shoshin</owners>
+        <projectUrl>https://github.com/MaxShoshin/LoadingIndicator</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>
+            Winforms long operation indicator.
+        </description>
+        <tags>Winforms, Loading, async, indicator, long, operation, windows.forms</tags>
+    </metadata>
+    <files>
+        <file src="LoadingIndicator*.dll" target="lib\net45" />
+    </files>
+</package>

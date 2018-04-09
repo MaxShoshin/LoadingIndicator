@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\System.Runtime.InteropServices.Analyzers.1.0.0\build\System.Runtime.InteropServices.Analyzers.props" Condition="Exists('..\packages\System.Runtime.InteropServices.Analyzers.1.0.0\build\System.Runtime.InteropServices.Analyzers.props')" />
+  <Import Project="..\packages\System.Runtime.Analyzers.1.0.0\build\System.Runtime.Analyzers.props" Condition="Exists('..\packages\System.Runtime.Analyzers.1.0.0\build\System.Runtime.Analyzers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{49E7B7C9-3B2F-415D-AB08-9A6AC4060A0D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LoadingIndicator.Controls</RootNamespace>
+    <AssemblyName>LoadingIndicator.Controls</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);SIGNED</DefineConstants>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(SolutionDir)\..\loading.indicator.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325">
+      <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\GlobalSupressions.cs">
+      <Link>GlobalSupressions.cs</Link>
+    </Compile>
+    <Compile Include="ImageExtensions.cs" />
+    <Compile Include="ControlExtensions.cs" />
+    <Compile Include="LayerControl.cs" />
+    <Compile Include="LongOperation.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="LoadingIndicatorControl.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LoadingIndicator.Controls.nuspec">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\Desktop.Analyzers.1.1.0\analyzers\dotnet\cs\Desktop.Analyzers.dll" />
+    <Analyzer Include="..\packages\Desktop.Analyzers.1.1.0\analyzers\dotnet\cs\Desktop.CSharp.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.AnalyzerPowerPack.1.0.0\analyzers\dotnet\cs\Microsoft.AnalyzerPowerPack.Common.dll" />
+    <Analyzer Include="..\packages\Microsoft.AnalyzerPowerPack.1.0.0\analyzers\dotnet\cs\Microsoft.AnalyzerPowerPack.CSharp.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+    <Analyzer Include="..\packages\System.Runtime.InteropServices.Analyzers.1.0.0\analyzers\dotnet\cs\System.Runtime.InteropServices.CSharp.Analyzers.dll" />
+    <Analyzer Include="..\packages\System.Security.Cryptography.Hashing.Algorithms.Analyzers.1.1.0\analyzers\dotnet\cs\System.Security.Cryptography.Hashing.Algorithms.Analyzers.dll" />
+    <Analyzer Include="..\packages\System.Security.Cryptography.Hashing.Algorithms.Analyzers.1.1.0\analyzers\dotnet\cs\System.Security.Cryptography.Hashing.Algorithms.CSharp.Analyzers.dll" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\StyleCop.Analyzers.Error.1.0.2\build\StyleCop.Analyzers.Error.targets" Condition="Exists('..\packages\StyleCop.Analyzers.Error.1.0.2\build\StyleCop.Analyzers.Error.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\StyleCop.Analyzers.Error.1.0.2\build\StyleCop.Analyzers.Error.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\StyleCop.Analyzers.Error.1.0.2\build\StyleCop.Analyzers.Error.targets'))" />
+    <Error Condition="!Exists('..\packages\System.Runtime.Analyzers.1.0.0\build\System.Runtime.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Runtime.Analyzers.1.0.0\build\System.Runtime.Analyzers.props'))" />
+    <Error Condition="!Exists('..\packages\System.Runtime.InteropServices.Analyzers.1.0.0\build\System.Runtime.InteropServices.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Runtime.InteropServices.Analyzers.1.0.0\build\System.Runtime.InteropServices.Analyzers.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+         Other similar extension points exist, see Microsoft.Common.targets.
+    <Target Name="BeforeBuild">
+    </Target>
+    <Target Name="AfterBuild">
+    </Target>
+    -->
+</Project>
