@@ -98,7 +98,7 @@ namespace LoadingIndicator.Controls
             e.Graphics.RotateTransform(_angle * _animationFrame);
 
             e.Graphics.InterpolationMode = InterpolationMode.Bilinear;
-            e.Graphics.SmoothingMode = SmoothingMode.HighSpeed;
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
             for (var i = 1; i <= NumberOfCircles; i++)
             {
