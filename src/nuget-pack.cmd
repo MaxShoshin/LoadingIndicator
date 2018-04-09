@@ -1,0 +1,1 @@
+powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File nuget-pack.ps1

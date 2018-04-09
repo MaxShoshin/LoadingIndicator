@@ -7,6 +7,9 @@ namespace LoadingIndicator.Controls
 {
     internal sealed class LayerControl : Control
     {
+        private const int WsExComposited = 0x02000000;
+        private const int WsClipChildren = 0x02000000;
+
         [CanBeNull] private Control _indicator;
 
         public LayerControl([NotNull] Image backgroundImage)
@@ -18,11 +21,25 @@ namespace LoadingIndicator.Controls
             SetStyle(ControlStyles.Selectable, true);
         }
 
+        // HACK: To reduce form flicker
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= WsExComposited; // Turn on WS_EX_COMPOSITED
+                cp.Style &= ~WsClipChildren;  // Turn off WS_CLIPCHILDREN
+                return cp;
+            }
+        }
+
         public void Remove()
         {
-            UnSubscribeFocus();
+            UnsubscribeChildrenControlEnter();
+
             Parent.Controls.Remove(this);
-            SizeChanged -= PlaceIndicator;
+
+            UnsubscribeSizeChange();
         }
 
         public void PlaceIndicator([NotNull] Control indicator, [NotNull] Image backgroundImage)
@@ -35,12 +52,12 @@ namespace LoadingIndicator.Controls
 
             _indicator = indicator;
 
-            SizeChanged += PlaceIndicator;
+            SubscribeSizeChange();
 
             PlaceIndicator();
         }
 
-        public void PreventOtherControlFocus()
+        public void SubscribeChildrenControlEnter()
         {
             Parent.ControlAdded += ParentControlChanged;
             Parent.ControlRemoved += ParentControlChanged;
@@ -54,18 +71,6 @@ namespace LoadingIndicator.Controls
             }
         }
 
-        // HACK: To reduce form flicker
-        protected override CreateParams CreateParams
-        {
-            get
-            {
-                CreateParams cp = base.CreateParams;
-                cp.ExStyle |= 0x02000000; // Turn on WS_EX_COMPOSITED
-                cp.Style &= ~0x02000000;  // Turn off WS_CLIPCHILDREN
-                return cp;
-            }
-        }
-
         protected override void OnKeyDown(KeyEventArgs e)
         {
             e.Handled = true;
@@ -74,6 +79,16 @@ namespace LoadingIndicator.Controls
         protected override void OnKeyPress(KeyPressEventArgs e)
         {
             e.Handled = true;
+        }
+
+        private void SubscribeSizeChange()
+        {
+            SizeChanged += PlaceIndicator;
+        }
+
+        private void UnsubscribeSizeChange()
+        {
+            SizeChanged -= PlaceIndicator;
         }
 
         private void PlaceIndicator([CanBeNull] object sender = null, [CanBeNull] EventArgs e = null)
@@ -105,11 +120,11 @@ namespace LoadingIndicator.Controls
 
         private void ParentControlChanged(object sender, ControlEventArgs e)
         {
-            UnSubscribeFocus();
-            PreventOtherControlFocus();
+            UnsubscribeChildrenControlEnter();
+            SubscribeChildrenControlEnter();
         }
 
-        private void UnSubscribeFocus()
+        private void UnsubscribeChildrenControlEnter()
         {
             Parent.ControlAdded -= ParentControlChanged;
             Parent.ControlRemoved -= ParentControlChanged;

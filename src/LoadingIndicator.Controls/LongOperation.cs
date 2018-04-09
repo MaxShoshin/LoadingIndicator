@@ -10,16 +10,16 @@ namespace LoadingIndicator.Controls
     public class LongOperation : IDisposable
     {
         [NotNull] private readonly Control _parentControl;
+        [NotNull] private readonly IDisposable _stopDisposable;
+        private readonly TimeSpan _indicatorDelay;
+        private readonly TimeSpan _minIndicatorShowTime;
 
         [CanBeNull] private LayerControl _layerControl;
         [CanBeNull] private Control _previouslyFocusedControl;
 
-        private readonly IDisposable _stopDisposable;
-        private readonly TimeSpan _indicatorDelay;
-        private readonly TimeSpan _minIndicatorShowTime;
         private int _started;
         private CancellationTokenSource _cancelationSource;
-        private DateTime _indicatorShownAt;
+        private DateTime? _indicatorShownAt;
 
         public LongOperation([NotNull] Control parentControl)
             : this(parentControl, TimeSpan.FromMilliseconds(700), TimeSpan.FromMilliseconds(400))
@@ -29,8 +29,8 @@ namespace LoadingIndicator.Controls
         public LongOperation([NotNull] Control parentControl, TimeSpan indicatorDelay, TimeSpan minIndicatorShowTime)
         {
             if (parentControl == null) throw new ArgumentNullException(nameof(parentControl));
-            if(indicatorDelay < TimeSpan.FromMilliseconds(200)) throw new ArgumentException("Indicator delay should be greater then 200ms", nameof(indicatorDelay));
-            if(minIndicatorShowTime < TimeSpan.Zero) throw new ArgumentException("Min indicator shown time should be greater then zero.", nameof(minIndicatorShowTime));
+            if (indicatorDelay < TimeSpan.FromMilliseconds(200)) throw new ArgumentException("Indicator delay should be greater then 200ms", nameof(indicatorDelay));
+            if (minIndicatorShowTime < TimeSpan.Zero) throw new ArgumentException("Min indicator shown time should be greater then zero.", nameof(minIndicatorShowTime));
 
             _parentControl = parentControl;
             _indicatorDelay = indicatorDelay;
@@ -38,6 +38,7 @@ namespace LoadingIndicator.Controls
             _stopDisposable = new DisposableAction(Stop);
         }
 
+        [NotNull]
         public IDisposable Start()
         {
             if (Interlocked.Increment(ref _started) != 1)
@@ -50,7 +51,7 @@ namespace LoadingIndicator.Controls
                 return _stopDisposable;
             }
 
-            _indicatorShownAt = DateTime.MinValue;
+            _indicatorShownAt = null;
 
             // HACK: To capture latest screenshot
             // i.e. when we select node in tree view just before start operation
@@ -68,7 +69,7 @@ namespace LoadingIndicator.Controls
 
             _parentControl.Controls.Add(_layerControl);
 
-            _layerControl.PreventOtherControlFocus();
+            _layerControl.SubscribeChildrenControlEnter();
             _layerControl.BringToFront();
             _layerControl.Select();
 
@@ -81,9 +82,9 @@ namespace LoadingIndicator.Controls
         public async void Stop()
         {
             var indicatorShownAt = _indicatorShownAt;
-            if (indicatorShownAt != DateTime.MinValue)
+            if (indicatorShownAt.HasValue)
             {
-                var indicatorDisplayTime = DateTime.UtcNow - indicatorShownAt;
+                var indicatorDisplayTime = DateTime.UtcNow - indicatorShownAt.Value;
                 if (indicatorDisplayTime < _minIndicatorShowTime)
                 {
                     await Task.Delay(_minIndicatorShowTime - indicatorDisplayTime).ConfigureAwait(false);
@@ -107,6 +108,45 @@ namespace LoadingIndicator.Controls
         public void Dispose()
         {
             Stop();
+        }
+
+        [NotNull]
+        protected virtual Image ChangeImage([NotNull] Image sourceImage)
+        {
+            if (sourceImage == null) throw new ArgumentNullException(nameof(sourceImage));
+
+            return sourceImage.ToBitmap().ImageBlurFilter().MakeGrayscale();
+        }
+
+        [NotNull]
+        protected virtual Control CreateProgressIndicator()
+        {
+            return new LoadingIndicatorControl();
+        }
+
+        [CanBeNull]
+        private static Control FindFocusedControl([CanBeNull] ContainerControl control)
+        {
+            if (control == null)
+            {
+                return null;
+            }
+
+            var focusedControl = control.ActiveControl;
+
+            if (focusedControl == control || focusedControl == null)
+            {
+                return control;
+            }
+
+            var compositeFocused = focusedControl as ContainerControl;
+
+            if (compositeFocused == null)
+            {
+                return focusedControl;
+            }
+
+            return FindFocusedControl(compositeFocused);
         }
 
         private void StopInternal()
@@ -136,7 +176,6 @@ namespace LoadingIndicator.Controls
             _layerControl = null;
         }
 
-
         private void RestoreFocus([NotNull] ContainerControl containerControl)
         {
             if (_previouslyFocusedControl == null ||
@@ -148,31 +187,6 @@ namespace LoadingIndicator.Controls
             }
 
             containerControl.ActiveControl = _previouslyFocusedControl;
-        }
-
-        [CanBeNull]
-        private static Control FindFocusedControl([CanBeNull] ContainerControl control)
-        {
-            if (control == null)
-            {
-                return null;
-            }
-
-            var focusedControl = control.ActiveControl;
-
-            if (focusedControl == control || focusedControl == null)
-            {
-                return control;
-            }
-
-            var compositeFocused = focusedControl as ContainerControl;
-
-            if (compositeFocused == null)
-            {
-                return focusedControl;
-            }
-
-            return FindFocusedControl(compositeFocused);
         }
 
         private async Task StartAsync()
@@ -206,22 +220,8 @@ namespace LoadingIndicator.Controls
             }
 
             _layerControl.PlaceIndicator(
-                    CreateProgressIndicator(),
-                    ChangeImage(_layerControl.BackgroundImage));
-        }
-
-        [NotNull]
-        protected virtual Image ChangeImage([NotNull] Image sourceImage)
-        {
-            if (sourceImage == null) throw new ArgumentNullException(nameof(sourceImage));
-
-            return sourceImage.ToBitmap().ImageBlurFilter().MakeGrayscale();
-        }
-
-        [NotNull]
-        protected  virtual Control CreateProgressIndicator()
-        {
-            return new LoadingIndicatorControl();
+                CreateProgressIndicator(),
+                ChangeImage(_layerControl.BackgroundImage));
         }
 
         private sealed class DisposableAction : IDisposable

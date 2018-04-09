@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 namespace LoadingIndicator.Controls
 {
-    public static class ControlExtensions
+    internal static class ControlExtensions
     {
         public static bool InvokeIfRequired([NotNull] this Control control, [NotNull] Action action)
         {
@@ -38,7 +38,7 @@ namespace LoadingIndicator.Controls
             return false;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Reviewed")]
         [NotNull]
         private static InvokeResult RunWithStackTrace(Action action)
         {
@@ -59,15 +59,15 @@ namespace LoadingIndicator.Controls
 
             [CanBeNull] private readonly ExceptionDispatchInfo _capturedException;
 
-            private InvokeResult()
-            {
-            }
-
             public InvokeResult([NotNull] Exception ex)
             {
                 if (ex == null) throw new ArgumentNullException(nameof(ex));
 
                 _capturedException = ExceptionDispatchInfo.Capture(ex);
+            }
+
+            private InvokeResult()
+            {
             }
 
             public void EnsureSuccess()

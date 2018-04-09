@@ -19,7 +19,7 @@ namespace ProgressIndicator
             _longOperation = new LongOperation(this);
         }
 
-        private async void button1_Click(object sender, System.EventArgs e)
+        private async void ButtonClick(object sender, System.EventArgs e)
         {
             await StartLongOperationAsync();
         }
@@ -32,7 +32,7 @@ namespace ProgressIndicator
             }
         }
 
-        private async void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        private async void TextBoxKeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)13)
             {

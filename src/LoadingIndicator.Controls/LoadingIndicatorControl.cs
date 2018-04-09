@@ -10,9 +10,12 @@ namespace LoadingIndicator.Controls
     public sealed class LoadingIndicatorControl : Control
     {
         private const float Tolerance = 0.000001f;
+        private const float MinCircleSize = 0.01f;
+        private const int CirclesMinCount = 3;
 
-        private int _value;
         private readonly Container _components;
+
+        private int _animationFrame;
         private float _circleSize = 1;
         private Color _circleColor = Color.FromArgb(172, Color.Orange);
         [NotNull] private SolidBrush _circleBrush;
@@ -44,7 +47,7 @@ namespace LoadingIndicator.Controls
             get => _numberOfCircles;
             set
             {
-                if (_numberOfCircles == value)
+                if (_numberOfCircles == value || value < CirclesMinCount)
                 {
                     return;
                 }
@@ -78,7 +81,7 @@ namespace LoadingIndicator.Controls
             get => _circleSize;
             set
             {
-                if (Math.Abs(_circleSize - value) < Tolerance)
+                if (Math.Abs(_circleSize - value) < Tolerance || value < MinCircleSize)
                 {
                     return;
                 }
@@ -92,10 +95,10 @@ namespace LoadingIndicator.Controls
         protected override void OnPaint(PaintEventArgs e)
         {
             e.Graphics.TranslateTransform(Width / 2.0F, Height / 2.0F);
-            e.Graphics.RotateTransform(_angle * _value);
+            e.Graphics.RotateTransform(_angle * _animationFrame);
 
-            e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            e.Graphics.InterpolationMode = InterpolationMode.Bilinear;
+            e.Graphics.SmoothingMode = SmoothingMode.HighSpeed;
 
             for (var i = 1; i <= NumberOfCircles; i++)
             {
@@ -130,18 +133,19 @@ namespace LoadingIndicator.Controls
                 _components.Dispose();
                 _circleBrush.Dispose();
             }
+
             base.Dispose(disposing);
         }
 
         private void AnimationTick(object sender, EventArgs e)
         {
-            if (_value + 1 <= NumberOfCircles)
+            if (_animationFrame + 1 <= NumberOfCircles)
             {
-                _value++;
+                _animationFrame++;
             }
             else
             {
-                _value = 1;
+                _animationFrame = 1;
             }
 
             Invalidate();

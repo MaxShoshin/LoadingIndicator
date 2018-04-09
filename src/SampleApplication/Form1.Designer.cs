@@ -56,7 +56,7 @@ namespace ProgressIndicator
             this.button1.TabIndex = 0;
             this.button1.Text = "Start Long Operation";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.ButtonClick);
             // 
             // pictureBox1
             // 
@@ -86,7 +86,7 @@ namespace ProgressIndicator
             this.textBox1.Size = new System.Drawing.Size(215, 20);
             this.textBox1.TabIndex = 3;
             this.textBox1.Text = "Press enter here to run long run operation";
-            this.textBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox1_KeyPress);
+            this.textBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxKeyPress);
             // 
             // splitContainer1
             // 

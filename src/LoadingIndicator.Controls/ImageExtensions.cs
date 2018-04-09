@@ -23,7 +23,8 @@ namespace LoadingIndicator.Controls
                 g.CopyFromScreen(
                     screenRectangle.X,
                     screenRectangle.Y,
-                    0, 0,
+                    0,
+                    0,
                     screenCapture.Size,
                     CopyPixelOperation.SourceCopy);
             }
@@ -60,13 +61,13 @@ namespace LoadingIndicator.Controls
         public static Bitmap MakeGrayscale([NotNull] this Image original)
         {
             var greyscaleMatrix = new ColorMatrix(
-                new []
+                new[]
                 {
-                    new [] { .3f, .3f , .3f , 0, 0 },
-                    new [] { .59f , .59f , .59f , 0, 0 },
-                    new [] { .11f , .11f , .11f, 0, 0 },
-                    new [] { 0f, 0, 0, 1, 0 },
-                    new [] { 0f, 0, 0, 0, 1 }
+                    new[] { .3f, .3f, .3f, 0, 0 },
+                    new[] { .59f, .59f, .59f, 0, 0 },
+                    new[] { .11f, .11f, .11f, 0, 0 },
+                    new[] { 0f, 0, 0, 1, 0 },
+                    new[] { 0f, 0, 0, 0, 1 }
                 });
 
             return original.ChangeColors(greyscaleMatrix);
@@ -75,13 +76,14 @@ namespace LoadingIndicator.Controls
         [NotNull]
         public static Bitmap MakeSepia([NotNull] this Image original)
         {
-            var sepiaMatrix = new ColorMatrix(new []
+            var sepiaMatrix = new ColorMatrix(
+                new[]
                 {
-                    new[] {.393f, .349f, .272f, 0, 0},
-                    new[] {.769f, .686f, .534f, 0, 0},
-                    new[] {.189f, .168f, .131f, 0, 0},
-                    new[] { 0f, 0, 0, 1, 0},
-                    new[] { 0f, 0, 0, 0, 1}
+                    new[] { .393f, .349f, .272f, 0, 0 },
+                    new[] { .769f, .686f, .534f, 0, 0 },
+                    new[] { .189f, .168f, .131f, 0, 0 },
+                    new[] { 0f, 0, 0, 1, 0 },
+                    new[] { 0f, 0, 0, 0, 1 }
                 });
 
             return original.ChangeColors(sepiaMatrix);
@@ -97,23 +99,31 @@ namespace LoadingIndicator.Controls
                 var attributes = new ImageAttributes();
                 attributes.SetColorMatrix(colorMatrix);
 
-                graphics.DrawImage(original, new Rectangle(0, 0, original.Width, original.Height),
-                    0, 0, original.Width, original.Height, GraphicsUnit.Pixel, attributes);
+                graphics.DrawImage(
+                    original,
+                    new Rectangle(0, 0, original.Width, original.Height),
+                    0,
+                    0,
+                    original.Width,
+                    original.Height,
+                    GraphicsUnit.Pixel,
+                    attributes);
             }
 
             return newBitmap;
         }
 
         [NotNull]
-        private static Bitmap ConvolutionFilter([NotNull] this Bitmap sourceBitmap,
-                                                  [NotNull] double[,] filterMatrix,
-                                                       double factor = 1,
-                                                            int bias = 0)
+        private static Bitmap ConvolutionFilter(
+            [NotNull] this Bitmap sourceBitmap,
+            [NotNull] double[,] filterMatrix,
+            double factor = 1,
+            int bias = 0)
         {
-            var sourceData = sourceBitmap.LockBits(new Rectangle(0, 0,
-                                     sourceBitmap.Width, sourceBitmap.Height),
-                                                       ImageLockMode.ReadOnly,
-                                                 PixelFormat.Format32bppArgb);
+            var sourceData = sourceBitmap.LockBits(
+                new Rectangle(0, 0, sourceBitmap.Width, sourceBitmap.Height),
+                ImageLockMode.ReadOnly,
+                PixelFormat.Format32bppArgb);
 
             var pixelBuffer = new byte[sourceData.Stride * sourceData.Height];
             var resultBuffer = new byte[sourceData.Stride * sourceData.Height];
@@ -125,41 +135,32 @@ namespace LoadingIndicator.Controls
 
             var filterOffset = (filterWidth - 1) / 2;
 
-            for (var offsetY = filterOffset; offsetY <
-                sourceBitmap.Height - filterOffset; offsetY++)
+            for (var offsetY = filterOffset; offsetY < sourceBitmap.Height - filterOffset; offsetY++)
             {
-                for (var offsetX = filterOffset; offsetX <
-                    sourceBitmap.Width - filterOffset; offsetX++)
+                for (var offsetX = filterOffset; offsetX < sourceBitmap.Width - filterOffset; offsetX++)
                 {
                     double blue = 0;
                     double green = 0;
                     double red = 0;
 
-                    var byteOffset = offsetY *
-                                     sourceData.Stride +
-                                     offsetX * 4;
+                    var byteOffset = offsetY * sourceData.Stride + offsetX * 4;
 
-                    for (var filterY = -filterOffset;
-                        filterY <= filterOffset; filterY++)
+                    for (var filterY = -filterOffset; filterY <= filterOffset; filterY++)
                     {
-                        for (var filterX = -filterOffset;
-                            filterX <= filterOffset; filterX++)
+                        for (var filterX = -filterOffset; filterX <= filterOffset; filterX++)
                         {
                             var calcOffset = byteOffset +
                                              filterX * 4 +
                                              filterY * sourceData.Stride;
 
                             blue += pixelBuffer[calcOffset] *
-                                    filterMatrix[filterY + filterOffset,
-                                                        filterX + filterOffset];
+                                    filterMatrix[filterY + filterOffset, filterX + filterOffset];
 
                             green += pixelBuffer[calcOffset + 1] *
-                                     filterMatrix[filterY + filterOffset,
-                                                        filterX + filterOffset];
+                                     filterMatrix[filterY + filterOffset, filterX + filterOffset];
 
                             red += pixelBuffer[calcOffset + 2] *
-                                   filterMatrix[filterY + filterOffset,
-                                                      filterX + filterOffset];
+                                   filterMatrix[filterY + filterOffset, filterX + filterOffset];
                         }
                     }
 
@@ -167,14 +168,11 @@ namespace LoadingIndicator.Controls
                     green = factor * green + bias;
                     red = factor * red + bias;
 
-                    blue = blue > 255 ? 255 :
-                        (blue < 0 ? 0 : blue);
+                    blue = blue > 255 ? 255 : (blue < 0 ? 0 : blue);
 
-                    green = green > 255 ? 255 :
-                        (green < 0 ? 0 : green);
+                    green = green > 255 ? 255 : (green < 0 ? 0 : green);
 
-                    red = red > 255 ? 255 :
-                        (red < 0 ? 0 : red);
+                    red = red > 255 ? 255 : (red < 0 ? 0 : red);
 
                     resultBuffer[byteOffset] = (byte)blue;
                     resultBuffer[byteOffset + 1] = (byte)green;
@@ -185,10 +183,10 @@ namespace LoadingIndicator.Controls
 
             var resultBitmap = new Bitmap(sourceBitmap.Width, sourceBitmap.Height);
 
-            var resultData = resultBitmap.LockBits(new Rectangle(0, 0,
-                                     resultBitmap.Width, resultBitmap.Height),
-                                                      ImageLockMode.WriteOnly,
-                                                 PixelFormat.Format32bppArgb);
+            var resultData = resultBitmap.LockBits(
+                new Rectangle(0, 0, resultBitmap.Width, resultBitmap.Height),
+                ImageLockMode.WriteOnly,
+                PixelFormat.Format32bppArgb);
 
             Marshal.Copy(resultBuffer, 0, resultData.Scan0, resultBuffer.Length);
             resultBitmap.UnlockBits(resultData);
@@ -203,10 +201,13 @@ namespace LoadingIndicator.Controls
             {
                 get
                 {
-                    return new double[,]
-                    { { 1, 2, 1, },
-                        { 2, 4, 2, },
-                        { 1, 2, 1, }, };
+                    return
+                        new double[,]
+                        {
+                            { 1, 2, 1, },
+                            { 2, 4, 2, },
+                            { 1, 2, 1, }
+                        };
                 }
             }
         }

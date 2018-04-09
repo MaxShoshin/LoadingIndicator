@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>LoadingIndicator.Controls</id>
-        <version>0.0.0.0</version>
+	<version>0.0.0.0</version> <!-- Will be taken from AssemblyInfomationVersion -->
         <title>LoadingIndicator.Controls</title>
         <authors>Maxim Shoshin</authors>
         <owners>Maxim Shoshin</owners>
@@ -14,6 +14,6 @@
         <tags>Winforms, Loading, async, indicator, long, operation, windows.forms</tags>
     </metadata>
     <files>
-        <file src="*.dll" target="lib\net45" />
+        <file src="LoadingIndicator*.dll" target="lib\net45" />
     </files>
 </package>
