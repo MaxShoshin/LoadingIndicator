@@ -9,6 +9,7 @@ ProjectSection(SolutionItems) = preProject
 	GlobalSupressions.cs = GlobalSupressions.cs
 	nuget-pack.cmd = nuget-pack.cmd
 	nuget-pack.ps1 = nuget-pack.ps1
+	..\README.md = ..\README.md
 EndProjectSection
 EndProject
 Global

@@ -10,6 +10,28 @@ Winforms long operation indicator.
 * Ability to change color of loading indicator
 * Ability to fully change indicator control
 
+## Get Started:
+```C#
+private LongOperation _longOperation;
+
+public MainForm()
+{
+   InitializeComponents();
+
+   // Initialize long operation with control which will
+   // be overlayed during long operations
+   _longOperation = new LongOperation(this);
+}
+
+public async vod DoSomethingLongClick(object sender, EventArgs e)
+{
+    using(_longOperation.Start())
+    {
+        await DoSomethingLongAsync();
+    }
+}
+```
+
 ## Screenshots:
 
 Indicator shown:
