@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 
-namespace LoadingIndicator.Controls
+namespace LoadingIndicator.Winforms
 {
     public class LongOperation : IDisposable
     {

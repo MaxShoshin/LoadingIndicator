@@ -3,7 +3,7 @@ using System.Runtime.ExceptionServices;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 
-namespace LoadingIndicator.Controls
+namespace LoadingIndicator.Winforms
 {
     internal static class ControlExtensions
     {

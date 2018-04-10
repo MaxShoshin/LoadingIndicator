@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using LoadingIndicator.Controls;
+using LoadingIndicator.Winforms;
 
 namespace ProgressIndicator
 {

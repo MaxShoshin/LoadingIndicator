@@ -64,9 +64,9 @@
     <EmbeddedResource Include="Images.resx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LoadingIndicator.Controls\LoadingIndicator.Controls.csproj">
+    <ProjectReference Include="..\LoadingIndicator.Winforms\LoadingIndicator.Winforms.csproj">
       <Project>{49e7b7c9-3b2f-415d-ab08-9a6ac4060a0d}</Project>
-      <Name>LoadingIndicator.Controls</Name>
+      <Name>LoadingIndicator.Winforms</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

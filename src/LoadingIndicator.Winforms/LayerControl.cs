@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 
-namespace LoadingIndicator.Controls
+namespace LoadingIndicator.Winforms
 {
     internal sealed class LayerControl : Control
     {

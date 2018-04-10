@@ -9,8 +9,8 @@
     <ProjectGuid>{49E7B7C9-3B2F-415D-AB08-9A6AC4060A0D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LoadingIndicator.Controls</RootNamespace>
-    <AssemblyName>LoadingIndicator.Controls</AssemblyName>
+    <RootNamespace>LoadingIndicator.Winforms</RootNamespace>
+    <AssemblyName>LoadingIndicator.Winforms</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -36,7 +36,7 @@
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);SIGNED</DefineConstants>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>$(SolutionDir)\..\Loading.Indicator.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\LoadingIndicator.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325">
@@ -65,7 +65,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="LoadingIndicator.Controls.nuspec">
+    <Content Include="LoadingIndicator.Winforms.nuspec">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

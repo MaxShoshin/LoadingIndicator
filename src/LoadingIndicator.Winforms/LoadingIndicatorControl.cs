@@ -5,7 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 
-namespace LoadingIndicator.Controls
+namespace LoadingIndicator.Winforms
 {
     public sealed class LoadingIndicatorControl : Control
     {
