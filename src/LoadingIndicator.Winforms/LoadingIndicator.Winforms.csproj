@@ -54,12 +54,13 @@
     <Compile Include="..\GlobalSupressions.cs">
       <Link>GlobalSupressions.cs</Link>
     </Compile>
-    <Compile Include="ImageExtensions.cs" />
     <Compile Include="ControlExtensions.cs" />
+    <Compile Include="ImageExtensions.cs" />
     <Compile Include="LayerControl.cs" />
     <Compile Include="LongOperation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LoadingIndicatorControl.cs" />
+    <Compile Include="NativeMethods.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

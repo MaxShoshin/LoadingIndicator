@@ -5,11 +5,11 @@ using LoadingIndicator.Winforms;
 
 namespace ProgressIndicator
 {
-    public sealed partial class MainForm : Form
+    public sealed partial class MainControl : Control
     {
         private readonly LongOperation _longOperation;
 
-        public MainForm()
+        public MainControl()
         {
             InitializeComponent();
 

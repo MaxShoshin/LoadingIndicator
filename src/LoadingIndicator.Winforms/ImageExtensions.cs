@@ -9,18 +9,41 @@ namespace LoadingIndicator.Winforms
 {
     public static class ImageExtensions
     {
+        private const float Tolerance = 0.0001f;
+
         [NotNull]
         public static Image CaptureScreenshot([NotNull] this Control control)
         {
-            var сlientRectangle = control.ClientRectangle;
-            var screenLocation = control.PointToScreen(сlientRectangle.Location);
+            var clientRectangle = control.ClientRectangle;
+
+            var screenLocation = control.PointToScreen(clientRectangle.Location);
             var screenRectangle = new Rectangle(screenLocation, control.ClientRectangle.Size);
+
+            float scaleX;
+            float scaleY;
+
+            using (var graphics = Graphics.FromHwnd(IntPtr.Zero))
+            {
+                var desktop = graphics.GetHdc();
+
+                scaleX = (float)NativeMethods.GetDeviceCaps(desktop, NativeMethods.HorizontalResolution) /
+                             NativeMethods.GetDeviceCaps(desktop, NativeMethods.DesktopHorizontalResolution);
+
+                scaleY = (float)NativeMethods.GetDeviceCaps(desktop, NativeMethods.VerticalResolution) /
+                           NativeMethods.GetDeviceCaps(desktop, NativeMethods.DesktopVerticalResolution);
+
+                screenRectangle = new Rectangle(
+                    (int)Math.Round(screenRectangle.X / scaleX),
+                    (int)Math.Round(screenRectangle.Y / scaleY),
+                    (int)Math.Round(screenRectangle.Width / scaleX),
+                    (int)Math.Round(screenRectangle.Height / scaleY));
+            }
 
             var screenCapture = new Bitmap(screenRectangle.Width, screenRectangle.Height);
 
-            using (Graphics g = Graphics.FromImage(screenCapture))
+            using (var graphics = Graphics.FromImage(screenCapture))
             {
-                g.CopyFromScreen(
+                graphics.CopyFromScreen(
                     screenRectangle.X,
                     screenRectangle.Y,
                     0,
@@ -29,7 +52,23 @@ namespace LoadingIndicator.Winforms
                     CopyPixelOperation.SourceCopy);
             }
 
-            return screenCapture;
+            if (Math.Abs(scaleX - 1f) < Tolerance && Math.Abs(scaleY - 1f) < Tolerance)
+            {
+                return screenCapture;
+            }
+
+            // Scale out image to allow system to scale it back... :)
+            var scaledScreenCapture = new Bitmap(clientRectangle.Width, clientRectangle.Height);
+            using (var graphics = Graphics.FromImage(scaledScreenCapture))
+            {
+                graphics.DrawImage(
+                    screenCapture,
+                    new Rectangle(Point.Empty, clientRectangle.Size),
+                    new Rectangle(Point.Empty, screenCapture.Size),
+                    GraphicsUnit.Pixel);
+            }
+
+            return scaledScreenCapture;
         }
 
         [NotNull]
