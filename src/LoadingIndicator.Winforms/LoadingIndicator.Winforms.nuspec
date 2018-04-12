@@ -1,19 +1,20 @@
-<?xml version="1.0"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
-    <metadata>
-        <id>LoadingIndicator.Winforms</id>
-	<version>0.0.0.0</version> <!-- Will be taken from AssemblyInfomationVersion -->
-        <title>LoadingIndicator.Winforms</title>
-        <authors>Maxim Shoshin</authors>
-        <owners>Maxim Shoshin</owners>
-        <projectUrl>https://github.com/MaxShoshin/LoadingIndicator</projectUrl>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>
-            Winforms long operation indicator.
-        </description>
-        <tags>Winforms, Loading, async, indicator, long, operation, windows.forms</tags>
-    </metadata>
-    <files>
-        <file src="LoadingIndicator*.dll" target="lib\net45" />
-    </files>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>LoadingIndicator.Winforms</id>
+    <version>0.0.0</version>
+    <title>LoadingIndicator.Winforms</title>
+    <authors>Maxim Shoshin</authors>
+    <owners>Maxim Shoshin</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
+    <projectUrl>https://github.com/MaxShoshin/LoadingIndicator</projectUrl>
+    <iconUrl>https://github.com/MaxShoshin/doc/icon.png</iconUrl>
+    <description>Winforms long operation indicator.</description>
+    <summary>Displays loading indicator in winforms applications, disable key/mouse events during long operations, debounce (do not change view if operation is take too short time).</summary>
+    <tags>Winforms, Loading, async, indicator, long, operation, windows.forms</tags>
+  </metadata>
+  <files>
+    <file src="LoadingIndicator*.dll" target="lib\net45" />
+  </files>
 </package>
