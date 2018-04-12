@@ -181,7 +181,9 @@ namespace LoadingIndicator.Winforms
             if (_previouslyFocusedControl == null ||
                 _previouslyFocusedControl.IsDisposed ||
                 _previouslyFocusedControl.Disposing ||
-                _previouslyFocusedControl.Parent == null)
+                _previouslyFocusedControl.Parent == null ||
+                !_previouslyFocusedControl.Visible ||
+                containerControl == _previouslyFocusedControl)
             {
                 return;
             }
