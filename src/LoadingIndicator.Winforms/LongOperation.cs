@@ -41,12 +41,12 @@ namespace LoadingIndicator.Winforms
         [NotNull]
         public IDisposable Start(bool displayIndicatorImmediatley = false)
         {
-            if (Interlocked.Increment(ref _started) != 1)
+            if (_parentControl.InvokeIfRequired(() => Start()))
             {
                 return _stopDisposable;
             }
 
-            if (_parentControl.InvokeIfRequired(() => Start()))
+            if (Interlocked.Increment(ref _started) != 1)
             {
                 return _stopDisposable;
             }
@@ -89,6 +89,11 @@ namespace LoadingIndicator.Winforms
 
         public async void Stop(bool hideIndicatorImmediatley = false)
         {
+            if (_parentControl.InvokeIfRequired(() => Stop(hideIndicatorImmediatley)))
+            {
+                return;
+            }
+
             var indicatorShownAt = _indicatorShownAt;
             if (indicatorShownAt.HasValue && !hideIndicatorImmediatley)
             {
@@ -110,7 +115,19 @@ namespace LoadingIndicator.Winforms
                 throw new InvalidOperationException("Stop long operation more times then starts.");
             }
 
-            StopInternal();
+            _cancelationSource.Cancel();
+
+            var form = _parentControl.FindForm();
+            var currentFocused = FindFocusedControl(form);
+
+            _layerControl.Remove();
+
+            if (form != null && currentFocused == _layerControl)
+            {
+                RestoreFocus(form);
+            }
+
+            _layerControl = null;
         }
 
         public void Dispose()
@@ -155,33 +172,6 @@ namespace LoadingIndicator.Winforms
             }
 
             return FindFocusedControl(compositeFocused);
-        }
-
-        private void StopInternal()
-        {
-            if (_parentControl.InvokeIfRequired(StopInternal))
-            {
-                return;
-            }
-
-            if (Volatile.Read(ref _started) != 0)
-            {
-                return;
-            }
-
-            _cancelationSource.Cancel();
-
-            var form = _parentControl.FindForm();
-            var currentFocused = FindFocusedControl(form);
-
-            _layerControl.Remove();
-
-            if (form != null && currentFocused == _layerControl)
-            {
-                RestoreFocus(form);
-            }
-
-            _layerControl = null;
         }
 
         private void RestoreFocus([NotNull] ContainerControl containerControl)

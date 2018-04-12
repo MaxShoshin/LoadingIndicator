@@ -64,7 +64,7 @@ namespace LoadingIndicator.Winforms
 
             foreach (Control childControl in Parent.Controls)
             {
-                if (childControl != this)
+                if (!(childControl is LayerControl))
                 {
                     childControl.Enter += OnControlEnter;
                 }
@@ -131,7 +131,7 @@ namespace LoadingIndicator.Winforms
 
             foreach (Control childControl in Parent.Controls)
             {
-                if (childControl != this)
+                if (!(childControl is LayerControl))
                 {
                     childControl.Enter -= OnControlEnter;
                 }
