@@ -24,9 +24,9 @@ namespace ProgressIndicator
             await StartLongOperationAsync();
         }
 
-        private async Task StartLongOperationAsync(double seconds = 10)
+        private async Task StartLongOperationAsync(double seconds = 10, bool immediatley = false)
         {
-            using (_longOperation.Start())
+            using (_longOperation.Start(immediatley))
             {
                 await Task.Delay(TimeSpan.FromSeconds(seconds)).ConfigureAwait(false);
             }
@@ -36,7 +36,7 @@ namespace ProgressIndicator
         {
             if (e.KeyChar == (char)13)
             {
-                await StartLongOperationAsync(0.8);
+                await StartLongOperationAsync(0.8, true);
             }
         }
     }

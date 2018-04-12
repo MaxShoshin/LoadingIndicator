@@ -35,11 +35,11 @@ namespace LoadingIndicator.Winforms
             _parentControl = parentControl;
             _indicatorDelay = indicatorDelay;
             _minIndicatorShowTime = minIndicatorShowTime;
-            _stopDisposable = new DisposableAction(Stop);
+            _stopDisposable = new DisposableAction(() => Stop());
         }
 
         [NotNull]
-        public IDisposable Start()
+        public IDisposable Start(bool displayIndicatorImmediatley = false)
         {
             if (Interlocked.Increment(ref _started) != 1)
             {
@@ -74,15 +74,23 @@ namespace LoadingIndicator.Winforms
             _layerControl.Select();
 
             _cancelationSource = new CancellationTokenSource();
-            Task.Run(StartAsync);
+
+            if (displayIndicatorImmediatley)
+            {
+                DisplayIndicator(_cancelationSource.Token);
+            }
+            else
+            {
+                Task.Run(StartAsync);
+            }
 
             return _stopDisposable;
         }
 
-        public async void Stop()
+        public async void Stop(bool hideIndicatorImmediatley = false)
         {
             var indicatorShownAt = _indicatorShownAt;
-            if (indicatorShownAt.HasValue)
+            if (indicatorShownAt.HasValue && !hideIndicatorImmediatley)
             {
                 var indicatorDisplayTime = DateTime.UtcNow - indicatorShownAt.Value;
                 if (indicatorDisplayTime < _minIndicatorShowTime)
@@ -202,10 +210,6 @@ namespace LoadingIndicator.Winforms
                 return;
             }
 
-            _indicatorShownAt = _minIndicatorShowTime == TimeSpan.Zero
-                ? DateTime.MinValue
-                : DateTime.UtcNow;
-
             DisplayIndicator(cancelToken);
         }
 
@@ -219,6 +223,11 @@ namespace LoadingIndicator.Winforms
             if (_started == 0 || cancelToken.IsCancellationRequested || _layerControl == null)
             {
                 return;
+            }
+
+            if (_minIndicatorShowTime != TimeSpan.Zero)
+            {
+                _indicatorShownAt = DateTime.UtcNow;
             }
 
             _layerControl.PlaceIndicator(
