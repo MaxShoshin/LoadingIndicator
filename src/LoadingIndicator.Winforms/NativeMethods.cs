@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace LoadingIndicator.Winforms
+namespace LoadingIndicator.WinForms
 {
     internal static class NativeMethods
     {

@@ -21,6 +21,9 @@ public MainForm()
    // Initialize long operation with control which will
    // be overlayed during long operations
    _longOperation = new LongOperation(this);
+
+   // You can pass settings to customize indicator view/behavior
+   // _longOperation = new LongOperation(this, LongOperationSettings.Default);
 }
 
 public async vod DoSomethingLongClick(object sender, EventArgs e)

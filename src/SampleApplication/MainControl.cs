@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using LoadingIndicator.Winforms;
+using LoadingIndicator.WinForms;
 
 namespace ProgressIndicator
 {
@@ -16,7 +17,15 @@ namespace ProgressIndicator
             pictureBox1.Image = Images.SampleImage;
             pictureBox2.Image = Images.SampleImage;
 
-            _longOperation = new LongOperation(this);
+            var settings = LongOperationSettings.Default;
+
+            //settings = settings.WithCirclesIndicator(
+            //    Color.FromArgb(178, Color.BlueViolet),
+            //    TimeSpan.FromMilliseconds(200),
+            //    1.1f,
+            //    7);
+
+            _longOperation = new LongOperation(this, settings);
         }
 
         private async void ButtonClick(object sender, System.EventArgs e)

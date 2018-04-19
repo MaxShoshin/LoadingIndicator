@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadingIndicator.Winforms", "LoadingIndicator.Winforms\LoadingIndicator.Winforms.csproj", "{49E7B7C9-3B2F-415D-AB08-9A6AC4060A0D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadingIndicator.WinForms", "LoadingIndicator.WinForms\LoadingIndicator.WinForms.csproj", "{49E7B7C9-3B2F-415D-AB08-9A6AC4060A0D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

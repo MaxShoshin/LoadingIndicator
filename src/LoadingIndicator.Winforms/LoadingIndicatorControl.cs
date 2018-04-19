@@ -5,7 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 
-namespace LoadingIndicator.Winforms
+namespace LoadingIndicator.WinForms
 {
     public sealed class LoadingIndicatorControl : Control
     {
@@ -21,6 +21,7 @@ namespace LoadingIndicator.Winforms
         [NotNull] private SolidBrush _circleBrush;
         private int _numberOfCircles = 8;
         private float _angle;
+        [NotNull] private readonly Timer _timerAnimation;
 
         public LoadingIndicatorControl()
         {
@@ -35,11 +36,11 @@ namespace LoadingIndicator.Winforms
 
             _components = new Container();
 
-            var timerAnimation = new Timer(_components);
-            timerAnimation.Interval = 150;
-            timerAnimation.Tick += AnimationTick;
+            _timerAnimation = new Timer(_components);
+            _timerAnimation.Interval = 150;
+            _timerAnimation.Tick += AnimationTick;
 
-            timerAnimation.Start();
+            _timerAnimation.Start();
         }
 
         public int NumberOfCircles
@@ -56,6 +57,20 @@ namespace LoadingIndicator.Winforms
                 _angle = 360.0F / value;
 
                 Invalidate();
+            }
+        }
+
+        public int AnimationInterval
+        {
+            get => _timerAnimation.Interval;
+            set
+            {
+                if (_timerAnimation.Interval == value)
+                {
+                    return;
+                }
+
+                _timerAnimation.Interval = value;
             }
         }
 

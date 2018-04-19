@@ -5,14 +5,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 
-namespace LoadingIndicator.Winforms
+namespace LoadingIndicator.WinForms
 {
     public class LongOperation : IDisposable
     {
         [NotNull] private readonly Control _parentControl;
+        [NotNull] private readonly LongOperationSettings _settings;
         [NotNull] private readonly IDisposable _stopDisposable;
-        private readonly TimeSpan _indicatorDelay;
-        private readonly TimeSpan _minIndicatorShowTime;
 
         [CanBeNull] private LayerControl _layerControl;
         [CanBeNull] private Control _previouslyFocusedControl;
@@ -22,19 +21,17 @@ namespace LoadingIndicator.Winforms
         private DateTime? _indicatorShownAt;
 
         public LongOperation([NotNull] Control parentControl)
-            : this(parentControl, TimeSpan.FromMilliseconds(700), TimeSpan.FromMilliseconds(400))
+            : this(parentControl, LongOperationSettings.Default)
         {
         }
 
-        public LongOperation([NotNull] Control parentControl, TimeSpan indicatorDelay, TimeSpan minIndicatorShowTime)
+        public LongOperation([NotNull] Control parentControl, [NotNull] LongOperationSettings settings)
         {
             if (parentControl == null) throw new ArgumentNullException(nameof(parentControl));
-            if (indicatorDelay < TimeSpan.FromMilliseconds(200)) throw new ArgumentException("Indicator delay should be greater then 200ms", nameof(indicatorDelay));
-            if (minIndicatorShowTime < TimeSpan.Zero) throw new ArgumentException("Min indicator shown time should be greater then zero.", nameof(minIndicatorShowTime));
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
 
             _parentControl = parentControl;
-            _indicatorDelay = indicatorDelay;
-            _minIndicatorShowTime = minIndicatorShowTime;
+            _settings = settings;
             _stopDisposable = new DisposableAction(() => Stop());
         }
 
@@ -98,9 +95,9 @@ namespace LoadingIndicator.Winforms
             if (indicatorShownAt.HasValue && !hideIndicatorImmediatley)
             {
                 var indicatorDisplayTime = DateTime.UtcNow - indicatorShownAt.Value;
-                if (indicatorDisplayTime < _minIndicatorShowTime)
+                if (indicatorDisplayTime < _settings.MinIndicatorShowTime)
                 {
-                    await Task.Delay(_minIndicatorShowTime - indicatorDisplayTime).ConfigureAwait(false);
+                    await Task.Delay(_settings.MinIndicatorShowTime - indicatorDisplayTime).ConfigureAwait(false);
                 }
             }
 
@@ -133,20 +130,6 @@ namespace LoadingIndicator.Winforms
         public void Dispose()
         {
             Stop();
-        }
-
-        [NotNull]
-        protected virtual Image ChangeImage([NotNull] Image sourceImage)
-        {
-            if (sourceImage == null) throw new ArgumentNullException(nameof(sourceImage));
-
-            return sourceImage.ToBitmap().ImageBlurFilter().MakeGrayscale();
-        }
-
-        [NotNull]
-        protected virtual Control CreateProgressIndicator()
-        {
-            return new LoadingIndicatorControl();
         }
 
         [CanBeNull]
@@ -193,7 +176,7 @@ namespace LoadingIndicator.Winforms
         {
             var cancelToken = _cancelationSource.Token;
 
-            await Task.Delay(_indicatorDelay).ConfigureAwait(false);
+            await Task.Delay(_settings.BeforeShowIndicatorDelay).ConfigureAwait(false);
 
             if (_started == 0 || cancelToken.IsCancellationRequested)
             {
@@ -215,14 +198,14 @@ namespace LoadingIndicator.Winforms
                 return;
             }
 
-            if (_minIndicatorShowTime != TimeSpan.Zero)
+            if (_settings.MinIndicatorShowTime != TimeSpan.Zero)
             {
                 _indicatorShownAt = DateTime.UtcNow;
             }
 
             _layerControl.PlaceIndicator(
-                CreateProgressIndicator(),
-                ChangeImage(_layerControl.BackgroundImage));
+                _settings.IndicatorFactory(),
+                _settings.ProcessImage(_layerControl.BackgroundImage));
         }
 
         private sealed class DisposableAction : IDisposable

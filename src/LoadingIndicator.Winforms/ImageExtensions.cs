@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 
-namespace LoadingIndicator.Winforms
+namespace LoadingIndicator.WinForms
 {
     public static class ImageExtensions
     {

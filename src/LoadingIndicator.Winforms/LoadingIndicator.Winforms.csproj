@@ -9,8 +9,8 @@
     <ProjectGuid>{49E7B7C9-3B2F-415D-AB08-9A6AC4060A0D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LoadingIndicator.Winforms</RootNamespace>
-    <AssemblyName>LoadingIndicator.Winforms</AssemblyName>
+    <RootNamespace>LoadingIndicator.WinForms</RootNamespace>
+    <AssemblyName>LoadingIndicator.WinForms</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -58,6 +58,7 @@
     <Compile Include="ImageExtensions.cs" />
     <Compile Include="LayerControl.cs" />
     <Compile Include="LongOperation.cs" />
+    <Compile Include="LongOperationSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LoadingIndicatorControl.cs" />
     <Compile Include="NativeMethods.cs" />
@@ -66,7 +67,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="LoadingIndicator.Winforms.nuspec">
+    <Content Include="LoadingIndicator.WinForms.nuspec">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
