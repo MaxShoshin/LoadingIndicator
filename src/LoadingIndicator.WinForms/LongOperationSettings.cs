@@ -122,6 +122,18 @@ namespace LoadingIndicator.WinForms
         }
 
         [NotNull]
+        public LongOperationSettings WithCustomIndicator([NotNull] Func<Control> indicatorFactory)
+        {
+            if (indicatorFactory == null) throw new ArgumentNullException(nameof(indicatorFactory));
+
+            return new LongOperationSettings(
+                BeforeShowIndicatorDelay,
+                MinIndicatorShowTime,
+                indicatorFactory,
+                ProcessImage);
+        }
+
+        [NotNull]
         public LongOperationSettings WithCirclesIndicator(
             Color circleColor,
             TimeSpan animationInterval,
