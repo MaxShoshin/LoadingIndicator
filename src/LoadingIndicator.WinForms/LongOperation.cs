@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 namespace LoadingIndicator.WinForms
 {
-    public class LongOperation : IDisposable
+    public sealed class LongOperation : IDisposable
     {
         [NotNull] private readonly Control _parentControl;
         [NotNull] private readonly LongOperationSettings _settings;
@@ -127,9 +127,24 @@ namespace LoadingIndicator.WinForms
             _layerControl = null;
         }
 
+        public void StopIfDisplayed(bool hideIndicatorImmediatley = false)
+        {
+            if (_parentControl.InvokeIfRequired(() => StopIfDisplayed(hideIndicatorImmediatley)))
+            {
+                return;
+            }
+
+            if (Volatile.Read(ref _started) == 0)
+            {
+                return;
+            }
+
+            Stop(hideIndicatorImmediatley);
+        }
+
         public void Dispose()
         {
-            Stop();
+            StopIfDisplayed();
         }
 
         [CanBeNull]
