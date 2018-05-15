@@ -22,15 +22,15 @@ namespace LoadingIndicator.WinForms
             float scaleX;
             float scaleY;
 
-            using (var graphics = Graphics.FromHwnd(IntPtr.Zero))
+            using (var graphics = Graphics.FromHwnd(control.Handle))
             {
-                var desktop = graphics.GetHdc();
+                var controlHdc = graphics.GetHdc();
 
-                scaleX = (float)NativeMethods.GetDeviceCaps(desktop, NativeMethods.HorizontalResolution) /
-                             NativeMethods.GetDeviceCaps(desktop, NativeMethods.DesktopHorizontalResolution);
+                scaleX = (float)NativeMethods.GetDeviceCaps(controlHdc, NativeMethods.HorizontalResolution) /
+                             NativeMethods.GetDeviceCaps(controlHdc, NativeMethods.DesktopHorizontalResolution);
 
-                scaleY = (float)NativeMethods.GetDeviceCaps(desktop, NativeMethods.VerticalResolution) /
-                           NativeMethods.GetDeviceCaps(desktop, NativeMethods.DesktopVerticalResolution);
+                scaleY = (float)NativeMethods.GetDeviceCaps(controlHdc, NativeMethods.VerticalResolution) /
+                           NativeMethods.GetDeviceCaps(controlHdc, NativeMethods.DesktopVerticalResolution);
 
                 screenRectangle = new Rectangle(
                     (int)Math.Round(screenRectangle.X / scaleX),
