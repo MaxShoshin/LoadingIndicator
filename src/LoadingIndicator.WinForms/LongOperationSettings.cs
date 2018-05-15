@@ -20,7 +20,8 @@ namespace LoadingIndicator.WinForms
                 TimeSpan.FromMilliseconds(700),
                 TimeSpan.FromMilliseconds(400),
                 CreateProgressIndicator,
-                ChangeImage)
+                ChangeImage,
+                false)
         {
         }
 
@@ -28,7 +29,8 @@ namespace LoadingIndicator.WinForms
             TimeSpan beforeShowIndicatorDelay,
             TimeSpan minIndicatorShowTime,
             [NotNull] Func<Control> indicatorFactory,
-            [NotNull] Func<Image, Image> processImage)
+            [NotNull] Func<Image, Image> processImage,
+            bool allowStopBeforeStart)
         {
             if (indicatorFactory == null) throw new ArgumentNullException(nameof(indicatorFactory));
             if (processImage == null) throw new ArgumentNullException(nameof(processImage));
@@ -37,6 +39,7 @@ namespace LoadingIndicator.WinForms
             MinIndicatorShowTime = minIndicatorShowTime;
             IndicatorFactory = indicatorFactory;
             ProcessImage = processImage;
+            AllowStopBeforeStart = allowStopBeforeStart;
         }
 
         public TimeSpan BeforeShowIndicatorDelay { get; }
@@ -49,6 +52,8 @@ namespace LoadingIndicator.WinForms
         [NotNull]
         public Func<Image, Image> ProcessImage { get; }
 
+        public bool AllowStopBeforeStart { get; }
+
         [NotNull]
         public LongOperationSettings ShowIndicatorAfter(TimeSpan indicatorShowTime)
         {
@@ -56,7 +61,8 @@ namespace LoadingIndicator.WinForms
                 indicatorShowTime,
                 MinIndicatorShowTime,
                 IndicatorFactory,
-                ProcessImage);
+                ProcessImage,
+                AllowStopBeforeStart);
         }
 
         [NotNull]
@@ -66,7 +72,8 @@ namespace LoadingIndicator.WinForms
                 BeforeShowIndicatorDelay,
                 minIndicatorShownTime,
                 IndicatorFactory,
-                ProcessImage);
+                ProcessImage,
+                AllowStopBeforeStart);
         }
 
         [NotNull]
@@ -82,7 +89,8 @@ namespace LoadingIndicator.WinForms
                 BeforeShowIndicatorDelay,
                 MinIndicatorShowTime,
                 IndicatorFactory,
-                image => image.MakeGrayscale().ImageBlurFilter());
+                image => image.MakeGrayscale().ImageBlurFilter(),
+                AllowStopBeforeStart);
         }
 
         [NotNull]
@@ -92,7 +100,8 @@ namespace LoadingIndicator.WinForms
                 BeforeShowIndicatorDelay,
                 MinIndicatorShowTime,
                 IndicatorFactory,
-                image => image.MakeSepia().ImageBlurFilter());
+                image => image.MakeSepia().ImageBlurFilter(),
+                AllowStopBeforeStart);
         }
 
         [NotNull]
@@ -130,7 +139,8 @@ namespace LoadingIndicator.WinForms
                 BeforeShowIndicatorDelay,
                 MinIndicatorShowTime,
                 indicatorFactory,
-                ProcessImage);
+                ProcessImage,
+                AllowStopBeforeStart);
         }
 
         [NotNull]
@@ -152,7 +162,19 @@ namespace LoadingIndicator.WinForms
                     indicator.AnimationInterval = (int)animationInterval.TotalMilliseconds;
                     return indicator;
                 },
-                ProcessImage);
+                ProcessImage,
+                AllowStopBeforeStart);
+        }
+
+        [NotNull]
+        public LongOperationSettings AllowStopBeforeStartMethods()
+        {
+            return new LongOperationSettings(
+                BeforeShowIndicatorDelay,
+                MinIndicatorShowTime,
+                IndicatorFactory,
+                ProcessImage,
+                true);
         }
 
         [NotNull]

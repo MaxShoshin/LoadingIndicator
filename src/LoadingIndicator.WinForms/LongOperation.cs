@@ -109,6 +109,11 @@ namespace LoadingIndicator.WinForms
 
             if (value < 0)
             {
+                if (_settings.AllowStopBeforeStart)
+                {
+                    return;
+                }
+
                 throw new InvalidOperationException("Stop long operation more times then starts.");
             }
 
