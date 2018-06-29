@@ -17,13 +17,12 @@ namespace ProgressIndicator
             pictureBox1.Image = Images.SampleImage;
             pictureBox2.Image = Images.SampleImage;
 
-            var settings = LongOperationSettings.Default;
-
-            //settings = settings.WithCirclesIndicator(
-            //    Color.FromArgb(178, Color.BlueViolet),
-            //    TimeSpan.FromMilliseconds(200),
-            //    1.1f,
-            //    7);
+            var settings = LongOperationSettings.Default
+                .WithBoxIndicator(boxSettings =>
+                {
+                    boxSettings.NumberOfBoxes = 5;
+                })
+                .AllowStopBeforeStartMethods();
 
             _longOperation = new LongOperation(this, settings);
         }

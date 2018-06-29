@@ -7,16 +7,18 @@ namespace LoadingIndicator.WinForms
 {
     public sealed class LongOperationSettings
     {
+        public static readonly LongOperationSettings Default = new LongOperationSettings();
+
         private const float DefaultCircleSize = 1f;
         private const int DefaultNumberOfCircles = 8;
-
-        public static readonly LongOperationSettings Default = new LongOperationSettings();
 
         private static readonly Color DefaultCircleColor = Color.FromArgb(178, Color.Orange);
         private static readonly TimeSpan DefaultAnimationInterval = TimeSpan.FromMilliseconds(150);
 
+        private readonly BoxIndicatorSettings _boxSettings = new BoxIndicatorSettings();
+
         public LongOperationSettings()
-            :this(
+            : this(
                 TimeSpan.FromMilliseconds(700),
                 TimeSpan.FromMilliseconds(400),
                 CreateProgressIndicator,
@@ -128,6 +130,36 @@ namespace LoadingIndicator.WinForms
             int numberOfCircles = DefaultNumberOfCircles)
         {
             return WithCirclesIndicator(DefaultCircleColor, DefaultAnimationInterval, circleSize, numberOfCircles);
+        }
+
+        public LongOperationSettings WithBoxIndicator()
+        {
+            return new LongOperationSettings(
+                BeforeShowIndicatorDelay,
+                MinIndicatorShowTime,
+                () =>
+                {
+                    var indicator = new BoxIndicatorControl(_boxSettings);
+                    return indicator;
+                },
+                ProcessImage,
+                AllowStopBeforeStart);
+        }
+
+        public LongOperationSettings WithBoxIndicator(Action<BoxIndicatorSettings> adjustBoxSettings)
+        {
+            adjustBoxSettings(_boxSettings);
+
+            return new LongOperationSettings(
+                BeforeShowIndicatorDelay,
+                MinIndicatorShowTime,
+                () =>
+                {
+                    var indicator = new BoxIndicatorControl(_boxSettings);
+                    return indicator;
+                },
+                ProcessImage,
+                AllowStopBeforeStart);
         }
 
         [NotNull]

@@ -41,6 +41,8 @@ Indicator shown:
 
 ![Indicator example](doc/after.jpg)
 
+![Indicator example](doc/boxIndicator.jpg)
+
 Before:
 
 ![Before show indicator](doc/before.jpg)

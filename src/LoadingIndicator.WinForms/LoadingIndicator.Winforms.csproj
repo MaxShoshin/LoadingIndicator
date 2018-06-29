@@ -54,6 +54,8 @@
     <Compile Include="..\GlobalSupressions.cs">
       <Link>GlobalSupressions.cs</Link>
     </Compile>
+    <Compile Include="BoxIndicatorControl.cs" />
+    <Compile Include="BoxIndicatorSettings.cs" />
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="ImageExtensions.cs" />
     <Compile Include="LayerControl.cs" />

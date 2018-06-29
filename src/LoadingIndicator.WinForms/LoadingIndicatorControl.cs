@@ -14,6 +14,7 @@ namespace LoadingIndicator.WinForms
         private const int CirclesMinCount = 3;
 
         private readonly Container _components;
+        [NotNull] private readonly Timer _timerAnimation;
 
         private int _animationFrame;
         private float _circleSize = 1;
@@ -21,7 +22,6 @@ namespace LoadingIndicator.WinForms
         [NotNull] private SolidBrush _circleBrush;
         private int _numberOfCircles = 8;
         private float _angle;
-        [NotNull] private readonly Timer _timerAnimation;
 
         public LoadingIndicatorControl()
         {
