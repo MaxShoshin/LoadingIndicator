@@ -38,7 +38,7 @@ namespace LoadingIndicator.WinForms
         [NotNull]
         public IDisposable Start(bool displayIndicatorImmediatley = false)
         {
-            if (_parentControl.InvokeIfRequired(() => Start()))
+            if (_parentControl.InvokeIfRequired(() => Start(displayIndicatorImmediatley)))
             {
                 return _stopDisposable;
             }
@@ -88,6 +88,12 @@ namespace LoadingIndicator.WinForms
         {
             if (_parentControl.InvokeIfRequired(() => Stop(hideIndicatorImmediatley)))
             {
+                if (_parentControl.IsDisposed || _parentControl.Disposing)
+                {
+                    var layerControl = _layerControl;
+                    layerControl?.Remove();
+                }
+
                 return;
             }
 
@@ -122,7 +128,7 @@ namespace LoadingIndicator.WinForms
             var form = _parentControl.FindForm();
             var currentFocused = FindFocusedControl(form);
 
-            _layerControl.Remove();
+            _layerControl?.Remove();
 
             if (form != null && currentFocused == _layerControl)
             {
@@ -149,7 +155,7 @@ namespace LoadingIndicator.WinForms
 
         public void Dispose()
         {
-            StopIfDisplayed();
+            StopIfDisplayed(true);
         }
 
         [CanBeNull]
