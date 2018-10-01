@@ -140,7 +140,7 @@ namespace LoadingIndicator.WinForms
 
         private void OnControlEnter(object sender, EventArgs e)
         {
-            Select();
+            this.SafeSelect();
         }
     }
 }

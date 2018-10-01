@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 namespace LoadingIndicator.WinForms
 {
-    internal static class ControlExtensions
+    internal static class InvokeControlExtensions
     {
         public static bool InvokeIfRequired([NotNull] this Control control, [NotNull] Action action)
         {

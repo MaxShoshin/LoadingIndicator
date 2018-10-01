@@ -68,7 +68,8 @@ namespace LoadingIndicator.WinForms
 
             _layerControl.SubscribeChildrenControlEnter();
             _layerControl.BringToFront();
-            _layerControl.Select();
+
+            _layerControl.SafeSelect();
 
             _cancelationSource = new CancellationTokenSource();
 
