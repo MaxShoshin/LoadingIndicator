@@ -96,6 +96,19 @@ namespace LoadingIndicator.WinForms
         }
 
         [NotNull]
+        public LongOperationSettings WithCustomImageProcessing([NotNull] Func<Image, Image> imageProcessor)
+        {
+            if (imageProcessor == null) throw new ArgumentNullException(nameof(imageProcessor));
+
+            return new LongOperationSettings(
+                BeforeShowIndicatorDelay,
+                MinIndicatorShowTime,
+                IndicatorFactory,
+                imageProcessor,
+                AllowStopBeforeStart);
+        }
+
+        [NotNull]
         public LongOperationSettings WithSepiaAndBlurBackground()
         {
             return new LongOperationSettings(
