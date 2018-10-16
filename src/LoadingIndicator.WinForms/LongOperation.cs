@@ -59,7 +59,7 @@ namespace LoadingIndicator.WinForms
 
             var parentControlImage = _parentControl.CaptureScreenshot();
 
-            _layerControl = new LayerControl(parentControlImage);
+            _layerControl = new LayerControl(parentControlImage, _settings.ProcessImage);
             _layerControl.Location = new Point(0, 0);
             _layerControl.Size = _parentControl.Size;
             _layerControl.Anchor = AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Top;
@@ -230,9 +230,7 @@ namespace LoadingIndicator.WinForms
                 _indicatorShownAt = DateTime.UtcNow;
             }
 
-            _layerControl.PlaceIndicator(
-                _settings.IndicatorFactory(),
-                _settings.ProcessImage(_layerControl.BackgroundImage));
+            _layerControl.PlaceIndicator(_settings.IndicatorFactory());
         }
 
         private sealed class DisposableAction : IDisposable

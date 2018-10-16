@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using JetBrains.Annotations;
@@ -7,15 +8,19 @@ namespace LoadingIndicator.WinForms
 {
     internal sealed class LayerControl : Control
     {
+        private readonly Func<Image, Image> _imageProcessor;
         private const int WsExComposited = 0x02000000;
         private const int WsClipChildren = 0x02000000;
 
         [CanBeNull] private Control _indicator;
+        [CanBeNull] private IDisposable _subscription;
 
-        public LayerControl([NotNull] Image backgroundImage)
+        public LayerControl([NotNull] Image backgroundImage, [NotNull] Func<Image, Image> imageProcessor)
         {
             if (backgroundImage == null) throw new ArgumentNullException(nameof(backgroundImage));
+            if (imageProcessor == null) throw new ArgumentNullException(nameof(imageProcessor));
 
+            _imageProcessor = imageProcessor;
             BackgroundImage = backgroundImage;
 
             SetStyle(ControlStyles.Selectable, true);
@@ -35,40 +40,34 @@ namespace LoadingIndicator.WinForms
 
         public void Remove()
         {
+            var parent = Parent;
+            if (parent == null)
+            {
+                return;
+            }
+
+            _indicator = null;
+
             UnsubscribeChildrenControlEnter();
 
-            Parent.Controls.Remove(this);
-
-            UnsubscribeSizeChange();
+            parent.Controls.Remove(this);
         }
 
-        public void PlaceIndicator([NotNull] Control indicator, [NotNull] Image backgroundImage)
+        public void PlaceIndicator([NotNull] Control indicator)
         {
             if (indicator == null) throw new ArgumentNullException(nameof(indicator));
-            if (backgroundImage == null) throw new ArgumentNullException(nameof(backgroundImage));
 
             Cursor = Cursors.WaitCursor;
-            BackgroundImage = backgroundImage;
+            BackgroundImage = _imageProcessor(BackgroundImage);
 
             _indicator = indicator;
-
-            SubscribeSizeChange();
 
             PlaceIndicator();
         }
 
         public void SubscribeChildrenControlEnter()
         {
-            Parent.ControlAdded += ParentControlChanged;
-            Parent.ControlRemoved += ParentControlChanged;
-
-            foreach (Control childControl in Parent.Controls)
-            {
-                if (!(childControl is LayerControl))
-                {
-                    childControl.Enter += OnControlEnter;
-                }
-            }
+            _subscription = new Subscription(Parent, OnControlEnter, ParentControlChanged);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -81,17 +80,26 @@ namespace LoadingIndicator.WinForms
             e.Handled = true;
         }
 
-        private void SubscribeSizeChange()
+        protected override void OnSizeChanged(EventArgs e)
         {
-            SizeChanged += PlaceIndicator;
+            base.OnSizeChanged(e);
+
+            if (Parent == null)
+            {
+                return;
+            }
+
+            BackgroundImage = Parent.CaptureScreenshot();
+
+            if (_indicator == null)
+            {
+                return;
+            }
+
+            PlaceIndicator();
         }
 
-        private void UnsubscribeSizeChange()
-        {
-            SizeChanged -= PlaceIndicator;
-        }
-
-        private void PlaceIndicator([CanBeNull] object sender = null, [CanBeNull] EventArgs e = null)
+        private void PlaceIndicator()
         {
             var indicator = _indicator;
             if (indicator == null)
@@ -126,21 +134,52 @@ namespace LoadingIndicator.WinForms
 
         private void UnsubscribeChildrenControlEnter()
         {
-            Parent.ControlAdded -= ParentControlChanged;
-            Parent.ControlRemoved -= ParentControlChanged;
-
-            foreach (Control childControl in Parent.Controls)
-            {
-                if (!(childControl is LayerControl))
-                {
-                    childControl.Enter -= OnControlEnter;
-                }
-            }
+            _subscription?.Dispose();
+            _subscription = null;
         }
 
         private void OnControlEnter(object sender, EventArgs e)
         {
             this.SafeSelect();
+        }
+
+        private sealed class Subscription : IDisposable
+        {
+            [NotNull] private readonly Control _parent;
+            [NotNull] private readonly EventHandler _onControlEnter;
+            [NotNull] private readonly ControlEventHandler _onParentControlChanged;
+            [NotNull] private readonly List<Control> _children;
+
+            public Subscription([NotNull] Control parent, [NotNull] EventHandler onControlEnter, [NotNull] ControlEventHandler onParentControlChanged)
+            {
+                _parent = parent;
+                _onControlEnter = onControlEnter;
+                _onParentControlChanged = onParentControlChanged;
+                _children = new List<Control>(_parent.Controls.Count);
+
+                _parent.ControlAdded += onParentControlChanged;
+                _parent.ControlRemoved += onParentControlChanged;
+
+                foreach (Control childControl in _parent.Controls)
+                {
+                    if (!(childControl is LayerControl))
+                    {
+                        _children.Add(childControl);
+                        childControl.Enter += onControlEnter;
+                    }
+                }
+            }
+
+            public void Dispose()
+            {
+                _parent.ControlAdded -= _onParentControlChanged;
+                _parent.ControlRemoved -= _onParentControlChanged;
+
+                foreach (var childControl in _children)
+                {
+                    childControl.Enter -= _onControlEnter;
+                }
+            }
         }
     }
 }
