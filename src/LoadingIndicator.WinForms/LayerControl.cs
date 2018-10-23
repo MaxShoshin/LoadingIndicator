@@ -8,9 +8,10 @@ namespace LoadingIndicator.WinForms
 {
     internal sealed class LayerControl : Control
     {
-        private readonly Func<Image, Image> _imageProcessor;
         private const int WsExComposited = 0x02000000;
         private const int WsClipChildren = 0x02000000;
+
+        private readonly Func<Image, Image> _imageProcessor;
 
         [CanBeNull] private Control _indicator;
         [CanBeNull] private IDisposable _subscription;

@@ -24,7 +24,18 @@ namespace LoadingIndicator.WinForms
                     return RunWithStackTrace(action);
                 };
 
-                var result = (InvokeResult)control.Invoke(wrappedAction);
+                InvokeResult result;
+                try
+                {
+                    result = (InvokeResult)control.Invoke(wrappedAction);
+                }
+                catch (InvalidOperationException)
+                {
+                    // Control is disposed between InvokeRequired and Invoke
+                    // or control is disposed during Invoke (invoked method is not started but control is disposed)
+                    return true;
+                }
+
                 result.EnsureSuccess();
 
                 return true;
