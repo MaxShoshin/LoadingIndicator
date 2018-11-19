@@ -52,6 +52,8 @@ namespace LoadingIndicator.WinForms
             UnsubscribeChildrenControlEnter();
 
             parent.Controls.Remove(this);
+
+            Dispose();
         }
 
         public void PlaceIndicator([NotNull] Control indicator)
