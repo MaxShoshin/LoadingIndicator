@@ -87,17 +87,6 @@ namespace LoadingIndicator.WinForms
 
         public async void Stop(bool hideIndicatorImmediatley = false)
         {
-            if (_parentControl.InvokeIfRequired(() => Stop(hideIndicatorImmediatley)))
-            {
-                if (_parentControl.IsDisposed || _parentControl.Disposing)
-                {
-                    var layerControl = _layerControl;
-                    layerControl?.Remove();
-                }
-
-                return;
-            }
-
             var indicatorShownAt = _indicatorShownAt;
             if (indicatorShownAt.HasValue && !hideIndicatorImmediatley)
             {
@@ -108,35 +97,7 @@ namespace LoadingIndicator.WinForms
                 }
             }
 
-            var value = Interlocked.Decrement(ref _started);
-            if (value > 0)
-            {
-                return;
-            }
-
-            if (value < 0)
-            {
-                if (_settings.AllowStopBeforeStart)
-                {
-                    return;
-                }
-
-                throw new InvalidOperationException("Stop long operation more times then starts.");
-            }
-
-            _cancelationSource.Cancel();
-
-            var form = _parentControl.FindForm();
-            var currentFocused = FindFocusedControl(form);
-
-            _layerControl?.Remove();
-
-            if (form != null && currentFocused == _layerControl)
-            {
-                RestoreFocus(form);
-            }
-
-            _layerControl = null;
+            StopInternal();
         }
 
         public void StopIfDisplayed(bool hideIndicatorImmediatley = false)
@@ -182,6 +143,50 @@ namespace LoadingIndicator.WinForms
             }
 
             return FindFocusedControl(compositeFocused);
+        }
+
+        private void StopInternal()
+        {
+            if (_parentControl.InvokeIfRequired(StopInternal))
+            {
+                if (_parentControl.IsDisposed || _parentControl.Disposing)
+                {
+                    var layerControl = _layerControl;
+                    layerControl?.Remove();
+                }
+
+                return;
+            }
+
+            var value = Interlocked.Decrement(ref _started);
+            if (value > 0)
+            {
+                return;
+            }
+
+            if (value < 0)
+            {
+                if (_settings.AllowStopBeforeStart)
+                {
+                    return;
+                }
+
+                throw new InvalidOperationException("Stop long operation more times then starts.");
+            }
+
+            _cancelationSource.Cancel();
+
+            var form = _parentControl.FindForm();
+            var currentFocused = FindFocusedControl(form);
+
+            _layerControl?.Remove();
+
+            if (form != null && currentFocused == _layerControl)
+            {
+                RestoreFocus(form);
+            }
+
+            _layerControl = null;
         }
 
         private void RestoreFocus([NotNull] ContainerControl containerControl)
