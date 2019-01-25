@@ -159,8 +159,26 @@ namespace LoadingIndicator.WinForms
                 AllowStopBeforeStart);
         }
 
-        public LongOperationSettings WithBoxIndicator(Action<BoxIndicatorSettings> adjustBoxSettings)
+        public LongOperationSettings WithImageIndicator([NotNull] Image image)
         {
+            if (image == null) throw new ArgumentNullException(nameof(image));
+
+            return new LongOperationSettings(
+                BeforeShowIndicatorDelay,
+                MinIndicatorShowTime,
+                () =>
+                {
+                    var indicator = new ImageIndicatorControl(image);
+                    return indicator;
+                },
+                ProcessImage,
+                AllowStopBeforeStart);
+        }
+
+        public LongOperationSettings WithBoxIndicator([NotNull] Action<BoxIndicatorSettings> adjustBoxSettings)
+        {
+            if (adjustBoxSettings == null) throw new ArgumentNullException(nameof(adjustBoxSettings));
+
             adjustBoxSettings(_boxSettings);
 
             return new LongOperationSettings(
