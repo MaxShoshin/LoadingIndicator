@@ -6,7 +6,7 @@ namespace LoadingIndicator.WinForms
     public class Animator : IDisposable
     {
         private readonly Control _control;
-        private int _animationFrame = 1;
+        private int _animationFrame = 0;
         private readonly Timer _timerAnimation;
         private int _frameCount;
 
@@ -64,13 +64,13 @@ namespace LoadingIndicator.WinForms
                 return;
             }
 
-            if (_animationFrame + 1 <= FrameCount)
+            if (_animationFrame + 1 < FrameCount)
             {
                 _animationFrame++;
             }
             else
             {
-                _animationFrame = 1;
+                _animationFrame = 0;
             }
 
             Invalidate();
