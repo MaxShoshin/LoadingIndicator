@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -11,8 +10,7 @@ namespace LoadingIndicator.WinForms
     {
         private const int BoxesMinCount = 3;
 
-        [NotNull] private readonly Container _components;
-        [NotNull] private readonly Timer _timerAnimation;
+        [NotNull] private readonly Animator _animator;
 
         private Color _boxColor;
         private Color _highlightedBoxColor;
@@ -20,8 +18,6 @@ namespace LoadingIndicator.WinForms
         [NotNull] private SolidBrush _normalBoxBrush;
         [NotNull] private SolidBrush _highlightedBoxBrush;
 
-        private int _numberOfBoxes;
-        private int _animationFrame;
         private int _cornerRadius;
         private int _boxSize;
 
@@ -29,28 +25,22 @@ namespace LoadingIndicator.WinForms
         {
             if (settings == null) throw new ArgumentNullException(nameof(settings));
 
+            _animator = new Animator(this, settings.NumberOfBoxes);
+            _animator.Interval = settings.AnimationInterval;
+
             _boxSize = settings.BoxSize;
-            _numberOfBoxes = settings.NumberOfBoxes;
             _cornerRadius = settings.RoundCornerRadius;
             _boxColor = settings.BoxColor;
             _highlightedBoxColor = settings.HighlightedBoxColor;
 
             SetStyle(ControlStyles.ResizeRedraw, true);
-            SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+            SetStyle(ControlStyles.Selectable, false);
             SetStyle(ControlStyles.Opaque, true);
 
-            Size = new Size((int)(_boxSize * _numberOfBoxes * 1.5), (int)(_boxSize * 1.1));
+            Size = new Size((int)(_boxSize * _animator.FrameCount * 1.5), (int)(_boxSize * 1.1));
 
             _normalBoxBrush = new SolidBrush(_boxColor);
             _highlightedBoxBrush = new SolidBrush(_highlightedBoxColor);
-
-            _components = new Container();
-
-            _timerAnimation = new Timer(_components);
-            _timerAnimation.Interval = settings.AnimationInteval;
-            _timerAnimation.Tick += AnimationTick;
-
-            _timerAnimation.Start();
         }
 
         public BoxIndicatorControl()
@@ -60,24 +50,22 @@ namespace LoadingIndicator.WinForms
 
         public int NumberOfBoxes
         {
-            get => _numberOfBoxes;
+            get => _animator.FrameCount;
             set
             {
-                if (_numberOfBoxes == value || value < BoxesMinCount)
+                if (value < BoxesMinCount)
                 {
                     return;
                 }
 
-                _numberOfBoxes = value;
-
-                Invalidate();
+                _animator.FrameCount = value;
             }
         }
 
-        public int AnimationInteval
+        public TimeSpan AnimationInterval
         {
-            get => _timerAnimation.Interval;
-            set => _timerAnimation.Interval = value;
+            get => _animator.Interval;
+            set => _animator.Interval = value;
         }
 
         public Color BoxColor
@@ -125,7 +113,7 @@ namespace LoadingIndicator.WinForms
             {
                 if (value < 0)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(value), "Should be positive");
+                    throw new ArgumentException();
                 }
 
                 if (_cornerRadius == value)
@@ -145,7 +133,7 @@ namespace LoadingIndicator.WinForms
             {
                 if (value < 0)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(value), "Should be positive");
+                    throw new ArgumentException();
                 }
 
                 if (_boxSize == value)
@@ -165,7 +153,7 @@ namespace LoadingIndicator.WinForms
 
             for (var i = 0; i < NumberOfBoxes; i++)
             {
-                var brush = _animationFrame == i ? _highlightedBoxBrush : _normalBoxBrush;
+                var brush = _animator.CurrentFrame == i ? _highlightedBoxBrush : _normalBoxBrush;
 
                 var rectangle = new Rectangle(0, 0, _boxSize, _boxSize);
                 var offset = (int)(i * rectangle.Width * 1.5);
@@ -181,28 +169,13 @@ namespace LoadingIndicator.WinForms
         {
             if (disposing)
             {
-                _components.Dispose();
-                _timerAnimation.Dispose();
+                _animator.Dispose();
 
                 _normalBoxBrush.Dispose();
                 _highlightedBoxBrush.Dispose();
             }
 
             base.Dispose(disposing);
-        }
-
-        private void AnimationTick(object sender, EventArgs e)
-        {
-            if (_animationFrame + 1 < NumberOfBoxes)
-            {
-                _animationFrame++;
-            }
-            else
-            {
-                _animationFrame = 0;
-            }
-
-            Invalidate();
         }
 
         private GraphicsPath RoundedRect(Rectangle bounds, int radius)

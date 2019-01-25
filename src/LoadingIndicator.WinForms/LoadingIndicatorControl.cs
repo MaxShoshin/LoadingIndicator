@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -12,15 +11,14 @@ namespace LoadingIndicator.WinForms
         private const float Tolerance = 0.000001f;
         private const float MinCircleSize = 0.01f;
         private const int CirclesMinCount = 3;
+        private const int DefaultNumberOfCircles = 8;
 
-        private readonly Container _components;
-        [NotNull] private readonly Timer _timerAnimation;
+        [NotNull] private readonly Animator _animator;
 
-        private int _animationFrame;
         private float _circleSize = 1;
         private Color _circleColor = Color.FromArgb(172, Color.Orange);
         [NotNull] private SolidBrush _circleBrush;
-        private int _numberOfCircles = 8;
+
         private float _angle;
 
         public LoadingIndicatorControl()
@@ -32,46 +30,30 @@ namespace LoadingIndicator.WinForms
             Size = new Size(100, 100);
 
             _circleBrush = new SolidBrush(_circleColor);
-            _angle = 360f / _numberOfCircles;
+            _angle = 360f / DefaultNumberOfCircles;
 
-            _components = new Container();
-
-            _timerAnimation = new Timer(_components);
-            _timerAnimation.Interval = 150;
-            _timerAnimation.Tick += AnimationTick;
-
-            _timerAnimation.Start();
+            _animator = new Animator(this, DefaultNumberOfCircles);
         }
 
         public int NumberOfCircles
         {
-            get => _numberOfCircles;
+            get => _animator.FrameCount;
             set
             {
-                if (_numberOfCircles == value || value < CirclesMinCount)
+                if (value == NumberOfCircles || value < CirclesMinCount)
                 {
                     return;
                 }
 
-                _numberOfCircles = value;
                 _angle = 360.0F / value;
-
-                Invalidate();
+                _animator.FrameCount = value;
             }
         }
 
-        public int AnimationInterval
+        public TimeSpan AnimationInterval
         {
-            get => _timerAnimation.Interval;
-            set
-            {
-                if (_timerAnimation.Interval == value)
-                {
-                    return;
-                }
-
-                _timerAnimation.Interval = value;
-            }
+            get => _animator.Interval;
+            set => _animator.Interval = value;
         }
 
         public Color CircleColor
@@ -110,7 +92,7 @@ namespace LoadingIndicator.WinForms
         protected override void OnPaint(PaintEventArgs e)
         {
             e.Graphics.TranslateTransform(Width / 2.0F, Height / 2.0F);
-            e.Graphics.RotateTransform(_angle * _animationFrame);
+            e.Graphics.RotateTransform(_angle * _animator.CurrentFrame);
 
             e.Graphics.InterpolationMode = InterpolationMode.Bilinear;
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
@@ -145,26 +127,11 @@ namespace LoadingIndicator.WinForms
         {
             if (disposing)
             {
-                _components.Dispose();
+                _animator.Dispose();
                 _circleBrush.Dispose();
-                _timerAnimation.Dispose();
             }
 
             base.Dispose(disposing);
-        }
-
-        private void AnimationTick(object sender, EventArgs e)
-        {
-            if (_animationFrame + 1 <= NumberOfCircles)
-            {
-                _animationFrame++;
-            }
-            else
-            {
-                _animationFrame = 1;
-            }
-
-            Invalidate();
         }
     }
 }

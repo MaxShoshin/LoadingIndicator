@@ -93,6 +93,7 @@ namespace LoadingIndicator.WinForms
                 return;
             }
 
+            // TODO: Fix
             BackgroundImage = Parent.CaptureScreenshot();
 
             if (_indicator == null)

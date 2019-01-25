@@ -58,9 +58,11 @@
     <Compile Include="..\GlobalSupressions.cs">
       <Link>GlobalSupressions.cs</Link>
     </Compile>
+    <Compile Include="Animator.cs" />
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
     <Compile Include="BoxIndicatorControl.cs" />
     <Compile Include="BoxIndicatorSettings.cs" />
+    <Compile Include="ControlVisibilityExtensions.cs" />
     <Compile Include="ImageIndicatorControl.cs" />
     <Compile Include="InvokeControlExtensions.cs" />
     <Compile Include="ImageExtensions.cs" />

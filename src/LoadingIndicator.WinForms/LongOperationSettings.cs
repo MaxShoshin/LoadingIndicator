@@ -222,7 +222,7 @@ namespace LoadingIndicator.WinForms
                     indicator.CircleColor = circleColor;
                     indicator.CircleSize = circleSize;
                     indicator.NumberOfCircles = numberOfCircles;
-                    indicator.AnimationInterval = (int)animationInterval.TotalMilliseconds;
+                    indicator.AnimationInterval = animationInterval;
                     return indicator;
                 },
                 ProcessImage,
