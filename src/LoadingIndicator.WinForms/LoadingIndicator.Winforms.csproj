@@ -39,6 +39,7 @@
     <AssemblyOriginatorKeyFile>..\LoadingIndicator.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325">
       <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
       <Private>True</Private>
@@ -54,7 +55,8 @@
     <Compile Include="..\GlobalSupressions.cs">
       <Link>GlobalSupressions.cs</Link>
     </Compile>
-    <Compile Include="BoxIndicatorControl.cs" />
+    <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
+    <Compile Include="BoxIndicatorControl.cs"/>
     <Compile Include="BoxIndicatorSettings.cs" />
     <Compile Include="InvokeControlExtensions.cs" />
     <Compile Include="ImageExtensions.cs" />
