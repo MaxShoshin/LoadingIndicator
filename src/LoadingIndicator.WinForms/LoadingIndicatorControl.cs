@@ -147,6 +147,7 @@ namespace LoadingIndicator.WinForms
             {
                 _components.Dispose();
                 _circleBrush.Dispose();
+                _timerAnimation.Dispose();
             }
 
             base.Dispose(disposing);

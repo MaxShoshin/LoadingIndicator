@@ -47,6 +47,7 @@ namespace LoadingIndicator.WinForms
                 return;
             }
 
+            _indicator?.Dispose();
             _indicator = null;
 
             UnsubscribeChildrenControlEnter();
@@ -100,6 +101,17 @@ namespace LoadingIndicator.WinForms
             }
 
             PlaceIndicator();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _indicator?.Dispose();
+                _subscription?.Dispose();
+            }
+
+            base.Dispose(disposing);
         }
 
         private void PlaceIndicator()

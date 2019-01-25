@@ -9,8 +9,6 @@ namespace LoadingIndicator.WinForms
 {
     public static class ImageExtensions
     {
-        private const float Tolerance = 0.0001f;
-
         [NotNull]
         public static Image CaptureScreenshot([NotNull] this Control control)
         {

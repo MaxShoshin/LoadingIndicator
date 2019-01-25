@@ -125,7 +125,7 @@ namespace LoadingIndicator.WinForms
             {
                 if (value < 0)
                 {
-                    throw new ArgumentException();
+                    throw new ArgumentOutOfRangeException(nameof(value), "Should be positive");
                 }
 
                 if (_cornerRadius == value)
@@ -145,7 +145,7 @@ namespace LoadingIndicator.WinForms
             {
                 if (value < 0)
                 {
-                    throw new ArgumentException();
+                    throw new ArgumentOutOfRangeException(nameof(value), "Should be positive");
                 }
 
                 if (_boxSize == value)
@@ -182,6 +182,7 @@ namespace LoadingIndicator.WinForms
             if (disposing)
             {
                 _components.Dispose();
+                _timerAnimation.Dispose();
 
                 _normalBoxBrush.Dispose();
                 _highlightedBoxBrush.Dispose();
