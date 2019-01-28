@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -25,6 +25,7 @@ namespace LoadingIndicator.WinForms
             BackgroundImage = backgroundImage;
 
             SetStyle(ControlStyles.Selectable, true);
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
         }
 
         // HACK: To reduce form flicker
@@ -93,13 +94,15 @@ namespace LoadingIndicator.WinForms
                 return;
             }
 
-            // TODO: Fix
-            BackgroundImage = Parent.CaptureScreenshot();
+            var backgroundImage = Parent.CaptureScreenshot();
 
             if (_indicator == null)
             {
+                BackgroundImage = backgroundImage;
                 return;
             }
+
+            BackgroundImage = _imageProcessor(backgroundImage);
 
             PlaceIndicator();
         }
