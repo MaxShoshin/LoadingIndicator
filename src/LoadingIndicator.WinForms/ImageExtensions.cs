@@ -9,10 +9,17 @@ namespace LoadingIndicator.WinForms
 {
     public static class ImageExtensions
     {
+        private static Bitmap Empty = new Bitmap(1,1);
+
         [NotNull]
         public static Image CaptureScreenshot([NotNull] this Control control)
         {
             var clientRectangle = control.ClientRectangle;
+
+            if (clientRectangle.Size.Width < 1 || clientRectangle.Size.Height < 1)
+            {
+                return Empty;
+            }
 
             var controlCapture = new Bitmap(clientRectangle.Width, clientRectangle.Height);
 
