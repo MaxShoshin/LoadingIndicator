@@ -30,7 +30,7 @@ namespace LoadingIndicator.WinForms
                 }
                 catch (ThreadAbortException ex)
                 {
-                    Thread.ResetAbort();
+                    threadWrapper.ResetAbort();
 
                     Logger.WarnException(AbortReason, ex);
                 }
