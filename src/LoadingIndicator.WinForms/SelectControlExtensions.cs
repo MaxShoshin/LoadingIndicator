@@ -22,11 +22,13 @@ namespace LoadingIndicator.WinForms
 
             // using Dispose to call ResetAbort always, if it was requested, even if no exception is thrown yet
             using (var threadWrapper = new ThreadWrapper(Thread.CurrentThread))
-            using (CreateTimer(threadWrapper))
             {
                 try
                 {
-                    control.Select();
+                    using (CreateTimer(threadWrapper))
+                    {
+                        control.Select();
+                    }
                 }
                 catch (ThreadAbortException ex)
                 {
@@ -75,7 +77,7 @@ namespace LoadingIndicator.WinForms
 
             public void ResetAbort()
             {
-                if (Interlocked.Exchange(ref _flag, AbortNotAllowed) == AbortRequested)
+                if (Thread.CurrentThread.ThreadState == ThreadState.AbortRequested && Interlocked.Exchange(ref _flag, AbortNotAllowed) == AbortRequested)
                 {
                     Thread.ResetAbort();
                 }
