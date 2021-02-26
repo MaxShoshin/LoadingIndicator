@@ -56,6 +56,8 @@ namespace LoadingIndicator.WinForms
 
         public bool AllowStopBeforeStart { get; }
 
+        public static bool DetectDeadlocks { get; set; }
+
         [NotNull]
         public LongOperationSettings ShowIndicatorAfter(TimeSpan indicatorShowTime)
         {

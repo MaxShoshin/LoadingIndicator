@@ -1,5 +1,4 @@
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.Threading;
 using System.Windows.Forms;
 using LoadingIndicator.WinForms.Logging;
@@ -9,8 +8,9 @@ namespace LoadingIndicator.WinForms
 {
     internal static class SelectControlExtensions
     {
+        private const string AbortReason = "Deadlock in Control.Select detected. Raised ThreadAbort to exit from deadlock.";
+
         private static readonly ILog Logger = LogProvider.GetLogger(typeof(SelectControlExtensions), "Invoke");
-        private static bool _own;
 
         // Try to avoid deadlock on Select method
         public static void SafeSelect(this Control control)
@@ -20,7 +20,9 @@ namespace LoadingIndicator.WinForms
                 return;
             }
 
-            using (new Timer(CancelSelect, Thread.CurrentThread, TimeSpan.FromSeconds(1), Timeout.InfiniteTimeSpan))
+            // using Dispose to call ResetAbort always, if it was requested, even if no exception is thrown yet
+            using (var threadWrapper = new ThreadWrapper(Thread.CurrentThread))
+            using (CreateTimer(threadWrapper))
             {
                 try
                 {
@@ -28,26 +30,61 @@ namespace LoadingIndicator.WinForms
                 }
                 catch (ThreadAbortException ex)
                 {
-                    if (_own)
-                    {
-                        Thread.ResetAbort();
+                    Thread.ResetAbort();
 
-                        Logger.DebugException("Deadlock in Control.Select detected. Raised ThreadAbort to exit from deadlock.", ex);
-                    }
-                }
-                finally
-                {
-                    _own = false;
+                    Logger.WarnException(AbortReason, ex);
                 }
             }
         }
 
+        private static IDisposable CreateTimer(ThreadWrapper threadWrapper)
+        {
+            if (!LongOperationSettings.DetectDeadlocks) return null;
+
+            return new Timer(CancelSelect, threadWrapper, TimeSpan.FromSeconds(1), Timeout.InfiniteTimeSpan);
+        }
+
         private static void CancelSelect(object state)
         {
-            Thread thread = (Thread)state;
+            var threadWrapper = (ThreadWrapper)state;
 
-            _own = true;
-            thread.Abort();
+            threadWrapper.AbortThread();
+        }
+
+        private class ThreadWrapper : IDisposable
+        {
+            private const int InitialValue = 0;
+            private const int AbortRequested = 1;
+            private const int AbortNotAllowed = -1;
+
+            private readonly Thread _thread;
+            private int _flag;
+
+            public ThreadWrapper(Thread thread)
+            {
+                _thread = thread;
+            }
+
+            public void AbortThread()
+            {
+                if (Interlocked.CompareExchange(ref _flag, AbortRequested, InitialValue) == InitialValue)
+                {
+                    _thread.Abort(AbortReason);
+                }
+            }
+
+            public void ResetAbort()
+            {
+                if (Interlocked.Exchange(ref _flag, AbortNotAllowed) == AbortRequested)
+                {
+                    Thread.ResetAbort();
+                }
+            }
+
+            public void Dispose()
+            {
+                ResetAbort();
+            }
         }
     }
 }
