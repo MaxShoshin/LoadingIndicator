@@ -77,8 +77,13 @@ namespace LoadingIndicator.WinForms
 
             public void ResetAbort()
             {
-                if (Thread.CurrentThread.ThreadState == ThreadState.AbortRequested && Interlocked.Exchange(ref _flag, AbortNotAllowed) == AbortRequested)
+                if (Thread.CurrentThread != _thread) return;
+
+                if (Interlocked.Exchange(ref _flag, AbortNotAllowed) == AbortRequested)
                 {
+                    // we should wait other thread requesting Thread.Abort() before we can call Thread.ResetAbort()
+                    SpinWait.SpinUntil(() => _thread.ThreadState == ThreadState.AbortRequested);
+
                     Thread.ResetAbort();
                 }
             }
