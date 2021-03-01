@@ -55,12 +55,7 @@ namespace LoadingIndicator.WinForms
 
         private class ThreadWrapper : IDisposable
         {
-            private const int InitialValue = 0;
-            private const int AbortRequested = 1;
-            private const int AbortNotAllowed = -1;
-
             private readonly Thread _thread;
-            private int _flag;
 
             public ThreadWrapper(Thread thread)
             {
@@ -69,7 +64,7 @@ namespace LoadingIndicator.WinForms
 
             public void AbortThread()
             {
-                if (Interlocked.CompareExchange(ref _flag, AbortRequested, InitialValue) == InitialValue)
+                if (_thread.ThreadState != ThreadState.AbortRequested)
                 {
                     _thread.Abort(AbortReason);
                 }
@@ -77,7 +72,7 @@ namespace LoadingIndicator.WinForms
 
             public void ResetAbort()
             {
-                if (Thread.CurrentThread.ThreadState == ThreadState.AbortRequested && Interlocked.Exchange(ref _flag, AbortNotAllowed) == AbortRequested)
+                if (_thread == Thread.CurrentThread && _thread.ThreadState == ThreadState.AbortRequested)
                 {
                     Thread.ResetAbort();
                 }
