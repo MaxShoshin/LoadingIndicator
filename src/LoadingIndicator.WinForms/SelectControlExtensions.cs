@@ -12,7 +12,7 @@ namespace LoadingIndicator.WinForms
 
         private static readonly ILog Logger = LogProvider.GetLogger(typeof(SelectControlExtensions), "Invoke");
 
-        // Try to avoid deadlock on Select method
+        // Try to avoid deadlock on Select method (sometimes infinite loop inside ContainerControl.UpdateFocusedControl)
         public static void SafeSelect(this Control control)
         {
             if (!control.CanSelect)
@@ -82,6 +82,8 @@ namespace LoadingIndicator.WinForms
                 if (Interlocked.Exchange(ref _flag, AbortNotAllowed) == AbortRequested)
                 {
                     // we should wait other thread requesting Thread.Abort() before we can call Thread.ResetAbort()
+                    // when it called from Dispose method (inside finally block) thread is marked as `AbortRequested`
+                    // but `ThreadAbortException` is not raised inside finally block
                     SpinWait.SpinUntil(() => _thread.ThreadState == ThreadState.AbortRequested);
 
                     Thread.ResetAbort();
