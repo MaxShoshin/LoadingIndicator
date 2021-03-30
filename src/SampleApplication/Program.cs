@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace ProgressIndicator
+namespace LoadingIndicator.Sample
 {
     public static class Program
     {

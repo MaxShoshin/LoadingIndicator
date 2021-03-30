@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace ProgressIndicator
+namespace LoadingIndicator.Sample
 {
     partial class MainControl
     {

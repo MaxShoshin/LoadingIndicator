@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LoadingIndicator.WinForms;
 
-namespace ProgressIndicator
+namespace LoadingIndicator.Sample
 {
     public sealed partial class MainControl : Control
     {
