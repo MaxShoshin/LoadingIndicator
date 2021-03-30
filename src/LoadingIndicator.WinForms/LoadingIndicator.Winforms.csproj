@@ -1,18 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyTitle>LoadingIndicator.Controls</AssemblyTitle>
-    <Product>LoadingIndicator.Controls</Product>
+    <AssemblyTitle>LoadingIndicator.Winforms</AssemblyTitle>
+    <Product>LoadingIndicator.Winforms</Product>
     <Description>Winforms long operation indicator.</Description>
     <Copyright>Copyright ©  2021</Copyright>
-    <PackageVersion>1.1.0</PackageVersion>
+    <PackageVersion>1.1.0-beta</PackageVersion>
     <AssemblyVersion>1.1.0.0</AssemblyVersion>
     <FileVersion>1.1.0.0</FileVersion>    
     <Authors>Maxim Shoshin</Authors>
-    <PackageIconUrl>https://raw.githubusercontent.com/MaxShoshin/LoadingIndicator/master/doc/icon.png</PackageIconUrl>
+    <PackageIcon>icon.png</PackageIcon>
     <PackageId>LoadingIndicator.WinForms</PackageId>  
-    <PackageProjectUrl>https://github.com/MaxShoshin/LoadingIndicator</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/MaxShoshin/LoadingIndicator</PackageProjectUrl>    
+    <RepositoryUrl>https://github.com/MaxShoshin/LoadingIndicator</RepositoryUrl>
     <PackageTags>Winforms, Loading, async, indicator, long, operation, windows.forms</PackageTags>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <Title>LoadingIndicator.WinForms</Title>
     <TargetFrameworks>net45;net5.0-windows</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <UseWindowsForms>true</UseWindowsForms>
@@ -27,10 +29,13 @@
 
   <ItemGroup>
     <Content Include="LICENSE.txt" Pack="true" PackagePath="LICENSE.txt" />
+    <None Include="icon.png" Pack="true" PackagePath="\"/>
   </ItemGroup>
   
   <ItemGroup> 
-    <PackageReference Include="JetBrains.Annotations" Version="2018.3.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2018.3.0" >
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
