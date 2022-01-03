@@ -3,7 +3,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>LoadingIndicator.Sample</RootNamespace>
     <AssemblyName>LoadingIndicator.Sample</AssemblyName>
-    <TargetFrameworks>net47;net5.0-windows</TargetFrameworks>
+    <TargetFrameworks>net47;net5.0-windows;net6.0-windows</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
     <Copyright>Copyright ©  2021</Copyright>
     <LangVersion>latest</LangVersion>
@@ -11,7 +11,7 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.Resources.Extensions" Version="5.0.0" />    
+    <PackageReference Include="System.Resources.Extensions" Version="6.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -19,11 +19,11 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <Compile Include="..\GlobalSupressions.cs" Link="GlobalSupressions.cs" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\LoadingIndicator.Winforms\LoadingIndicator.Winforms.csproj" />
   </ItemGroup>
