@@ -15,7 +15,7 @@
     <PackageTags>Winforms, Loading, async, indicator, long, operation, windows.forms</PackageTags>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <Title>LoadingIndicator.WinForms</Title>
-    <TargetFrameworks>net45;net5.0-windows;net6.0-windows</TargetFrameworks>
+    <TargetFrameworks>net45;net5.0-windows;net6.0-windows;net8.0-windows</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <UseWindowsForms>true</UseWindowsForms>
     <IsPackable>true</IsPackable>
