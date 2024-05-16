@@ -3,7 +3,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>LoadingIndicator.Sample</RootNamespace>
     <AssemblyName>LoadingIndicator.Sample</AssemblyName>
-    <TargetFrameworks>net47;net5.0-windows;net6.0-windows</TargetFrameworks>
+    <TargetFrameworks>net47;net5.0-windows;net6.0-windows;net8.0-windows</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
     <Copyright>Copyright ©  2021</Copyright>
     <LangVersion>latest</LangVersion>
